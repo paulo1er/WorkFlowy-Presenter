@@ -27,6 +27,13 @@
       };
       timerUpdateNodes = setInterval(updateNodes, 300);
     };
+    function goParent() {
+      var parentPath = $(".selected").parent().parent().children(".name").children(".bullet").attr("href");
+      if(parentPath)
+        location.href = parentPath;
+      else
+        location.href = "/#/";
+    }
     var addCSS = function() {
       var path = chrome.extension.getURL('css/inject.css');
       $('head').append($('<link>')
@@ -34,10 +41,16 @@
           .attr("rel","stylesheet")
           .attr("type","text/css")
           .attr("href", path));
+      $("#logo:not([class*='show'])").addClass("show");
+      $("#searchForm:not([class*='show'])").addClass("show");
+      $('#header').append($('<a>')
+        .attr("id","goParent")
+        .click(goParent)
+        .text("<"));
     };
     var deleteCSS = function() {
       $('#injectCSS').remove();
-      $('#myHeader').remove();
+      $('#goParent').remove();
     };
     var startWorking = function() {
       document.addEventListener("DOMNodeInserted", startTimer);

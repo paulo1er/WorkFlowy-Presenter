@@ -13,16 +13,6 @@ div.content-img img {
 
 .content .contentTag, .nameAnimated .contentTag {
   display: none !important;
-  text-decoration: none !important;
-  color: #FFF !important;
-  background: #2A7794 !important;
-  font-weight: 600 !important;
-  font-size: 14px !important;
-  padding: 2px 4px !important;
-  margin: 0 !important;
-  -moz-border-radius: 0 !important;
-  -webkit-border-radius: 0 !important;
-  border-radius: 0 !important;
 }
 
 .content .contentTagText, .nameAnimated .contentTagText {
@@ -38,19 +28,16 @@ div.content-img img {
   color: yellow !important;
 }
 
-#header{
+#header div:not(.show){
   display: none !important;
 }
 
-#documentView{
-  padding-top:0 !important;
-}
 
 #pageContainer{
   margin-top:0 !important;
 }
 .showCompleted{
-  padding-top: 15px !important;
+  padding-top: 0 !important;
 }
 
 .pageStar{
@@ -62,4 +49,19 @@ div.content-img img {
 
 .parent > .name {
   display: none !important;
+}
+
+#goParent {
+    text-decoration: none;
+    display: inline-block;
+    margin: 3px 20px;
+    padding: 4px 12px;
+    background-color: #f1f1f1;
+    color: black;
+    border-radius: 25%;
+}
+
+#goParent:hover {
+    background-color: #ddd;
+    color: black;
 }
