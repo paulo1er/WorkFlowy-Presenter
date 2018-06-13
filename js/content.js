@@ -3,6 +3,8 @@
     var arColors = ["red", "blue", "green", "yellow", "aqua", "black", "fuchsia", "gray", "lime", "maroon", "navy", "olive", "orange", "purple", "silver", "teal", "white"];
     var mode = "color";
     var prev_mode = mode;
+    var isPresenter = true;
+    var prev_isPresenter = isPresenter;
     var timerUpdateNodes;
     var updateNodes = function() {
         var TagTexts = $(".contentTagText");
@@ -25,8 +27,21 @@
       };
       timerUpdateNodes = setInterval(updateNodes, 300);
     };
+    var addCSS = function() {
+      var path = chrome.extension.getURL('css/inject.css');
+      $('head').append($('<link>')
+          .attr("id","injectCSS")
+          .attr("rel","stylesheet")
+          .attr("type","text/css")
+          .attr("href", path));
+    };
+    var deleteCSS = function() {
+      $('#injectCSS').remove();
+      $('#myHeader').remove();
+    };
     var startWorking = function() {
       document.addEventListener("DOMNodeInserted", startTimer);
+      if(isPresenter) addCSS(); else deleteCSS();
       chrome.storage.onChanged.addListener(function(changes, namespace) {
         if ("MarkerMode" in changes) {
           prev_mode = mode;
@@ -39,19 +54,23 @@
           }
           startTimer();
         };
+        if ("presenter" in changes) {
+          prev_isPresenter = isPresenter;
+          isPresenter = changes.presenter.newValue;
+          if (prev_isPresenter != isPresenter) {
+            if(isPresenter) addCSS();
+            else deleteCSS();
+          }
+          startTimer();
+        };
        });
     };
     var callbackGetValue = function(vals) {
       mode = (vals.MarkerMode? "background-color": "color");
+      isPresenter = vals.presenter;
       startWorking();
     };
-  chrome.storage.sync.get({"MarkerMode": true}, callbackGetValue);
-
-  var path = chrome.extension.getURL('css/inject.css');
-  $('head').append($('<link>')
-      .attr("rel","stylesheet")
-      .attr("type","text/css")
-      .attr("href", path));
+  chrome.storage.sync.get({"MarkerMode": true, "presenter":true}, callbackGetValue);
 
 	chrome.runtime.sendMessage({
 		type: 'showIcon'

@@ -37,3 +37,29 @@ div.content-img img {
   background-color: transparent !important;
   color: yellow !important;
 }
+
+#header{
+  display: none !important;
+}
+
+#documentView{
+  padding-top:0 !important;
+}
+
+#pageContainer{
+  margin-top:0 !important;
+}
+.showCompleted{
+  padding-top: 15px !important;
+}
+
+.pageStar{
+  display: none !important;
+}
+.moreControlsButton{
+  margin-right: 0 !important;
+}
+
+.parent > .name {
+  display: none !important;
+}
