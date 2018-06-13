@@ -1,0 +1,67 @@
+div.content-img img {
+  max-width: 95%;
+}
+
+.selected.project > .name {
+  color: #4d7ecc !important;
+  padding: 12px 60px !important;
+  background-color: #EEEEEE !important;
+  margin: 10px 0 0 0 !important;
+  margin-left: -60px !important;
+  margin-right: -60px !important;
+}
+
+.content .contentTag, .nameAnimated .contentTag {
+  display: none !important;
+}
+
+.content .contentTagText, .nameAnimated .contentTagText {
+  text-decoration: none !important;
+}
+
+.content .contentTag:hover {
+  background: #2D8853 !important;
+}
+
+.content .contentMatch {
+  background-color: transparent !important;
+  color: yellow !important;
+}
+
+#header div:not(.show){
+  display: none !important;
+}
+
+
+#pageContainer{
+  margin-top:0 !important;
+}
+.showCompleted{
+  padding-top: 0 !important;
+}
+
+.pageStar{
+  display: none !important;
+}
+.moreControlsButton{
+  margin-right: 0 !important;
+}
+
+.parent > .name {
+  display: none !important;
+}
+
+#goParent {
+    text-decoration: none;
+    display: inline-block;
+    margin: 3px 20px;
+    padding: 4px 12px;
+    background-color: #f1f1f1;
+    color: black;
+    border-radius: 25%;
+}
+
+#goParent:hover {
+    background-color: #ddd;
+    color: black;
+}
