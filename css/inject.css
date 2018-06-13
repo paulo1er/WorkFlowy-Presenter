@@ -1,0 +1,39 @@
+div.content-img img {
+  max-width: 95%;
+}
+
+.selected.project > .name {
+  color: #4d7ecc !important;
+  padding: 12px 60px !important;
+  background-color: #EEEEEE !important;
+  margin: 10px 0 0 0 !important;
+  margin-left: -60px !important;
+  margin-right: -60px !important;
+}
+
+.content .contentTag, .nameAnimated .contentTag {
+  display: none !important;
+  text-decoration: none !important;
+  color: #FFF !important;
+  background: #2A7794 !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  padding: 2px 4px !important;
+  margin: 0 !important;
+  -moz-border-radius: 0 !important;
+  -webkit-border-radius: 0 !important;
+  border-radius: 0 !important;
+}
+
+.content .contentTagText, .nameAnimated .contentTagText {
+  text-decoration: none !important;
+}
+
+.content .contentTag:hover {
+  background: #2D8853 !important;
+}
+
+.content .contentMatch {
+  background-color: transparent !important;
+  color: yellow !important;
+}

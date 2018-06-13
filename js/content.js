@@ -46,6 +46,14 @@
       startWorking();
     };
   chrome.storage.sync.get({"MarkerMode": true}, callbackGetValue);
-    
-}) (jQuery);
 
+  var path = chrome.extension.getURL('css/inject.css');
+  $('head').append($('<link>')
+      .attr("rel","stylesheet")
+      .attr("type","text/css")
+      .attr("href", path));
+
+	chrome.runtime.sendMessage({
+		type: 'showIcon'
+	}, function() {});
+}) (jQuery);

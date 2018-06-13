@@ -1,8 +1,6 @@
-function showMainIcon(tabId, changeInfo, tab) {
-  if ((tab.url == "https://workflowy.com/") || (tab.url == "http://workflowy.com/")) {
-    chrome.pageAction.show(tabId);
-  };
-};
 
-// Listen for any changes to the URL of any tab.
-chrome.tabs.onUpdated.addListener(showMainIcon);
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.type == 'showIcon') {
+    chrome.pageAction.show(sender.tab.id);
+  }
+});

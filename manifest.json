@@ -10,7 +10,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://workflowy.com/", "http://workflowy.com/"],
+      "matches": ["https://workflowy.com/*"],
       "js": ["js/jquery.min.js", "js/content.js"]
     }
   ],
@@ -25,5 +25,8 @@
     "default_popup": "popup.html"
   },
   "permissions": ["tabs", "storage"],
-  "options_page": "popup.html"
+  "options_page": "popup.html",
+  "web_accessible_resources":  [
+    "css/*.css"
+  ]
 }
