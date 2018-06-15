@@ -92,6 +92,52 @@
       document.addEventListener("DOMNodeInserted", startTimer);
       document.head.appendChild(elt);
       document.head.appendChild(elt2);
+      $('#controlsLeft').append("<hr>")
+      var input = $("<input>").attr("type","color").val("#000000").hide();
+      input.on("change",function() {
+        var content = $(this).parent().parent().parent().children(".content");
+        content.children(".contentTag").children(".contentTagText").each(function() {
+          var cf = /^wfe-font-color:(?:([a-z]*)|rgb:([0-9a-f]*))$/i.exec($(this).text());
+          if(cf != null) {
+            $(this).parent().remove();
+          }
+        });
+        content.focus();
+        var tagToAdd = "#wfe-font-color:rgb:" + $(this).val().slice(1);
+        if(content.text()[content.text().length - 1] != " ") tagToAdd = " " + tagToAdd;
+        content.html(content.html() + tagToAdd);
+        $(this).val("#000000");
+        content.blur();
+      });
+      var a =  $("<a>").text("font color");
+      a.click(function(){
+        input.click();
+      })
+      $('#controlsLeft').append(input);
+      $('#controlsLeft').append(a);
+
+      var input2 = $("<input>").attr("type","color").val("#FFFFFF").hide();
+      input2.on("change",function() {
+        var content = $(this).parent().parent().parent().children(".content");
+        content.children(".contentTag").children(".contentTagText").each(function() {
+          var cf = /^wfe-background:(?:([a-z]*)|rgb:([0-9a-f]*))$/i.exec($(this).text());
+          if(cf != null) {
+            $(this).parent().remove();
+          }
+        });
+        content.focus();
+        var tagToAdd = "#wfe-background:rgb:" + $(this).val().slice(1);
+        if(content.text()[content.text().length - 1] != " ") tagToAdd = " " + tagToAdd;
+        content.html(content.html() + tagToAdd);
+        $(this).val("#FFFFFF");
+        content.blur();
+      });
+      var a2 =  $("<a>").text("background");
+      a2.click(function(){
+        input2.click();
+      })
+      $('#controlsLeft').append(input2);
+      $('#controlsLeft').append(a2);
       if(isPresenter) addCSS(); else deleteCSS();
       chrome.storage.onChanged.addListener(function(changes, namespace) {
         if ("presenter" in changes) {
