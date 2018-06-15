@@ -45,6 +45,11 @@ div.content-img img {
 }
 .moreControlsButton{
   margin-right: 0 !important;
+  z-index: 3 !important;
+}
+
+#getMoreSpaceButtonTopRight{
+  display: none !important;
 }
 
 .parent > .name {
