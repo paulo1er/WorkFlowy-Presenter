@@ -8,7 +8,7 @@
         var colorB = null;
         var colorF = null;
         node.children(".contentTag").children(".contentTagText").each(function() {
-          var cb = /^cb-(?:([a-z]*)|rgb-([0-9a-f]*))$/i.exec($(this).text());
+          var cb = /^wfe-background:(?:([a-z]*)|rgb:([0-9a-f]*))$/i.exec($(this).text());
           if(cb != null && cb[1] != null) {
             if(allColor.hasOwnProperty(cb[1].toUpperCase()))
               colorB = new Color(allColor[cb[1].toUpperCase()]);
@@ -21,7 +21,7 @@
             c= '0x'+c.join('');
             colorB = new Color([(c>>16)&255, (c>>8)&255, c&255]);
           }
-          var cf = /^cf-(?:([a-z]*)|rgb-([0-9a-f]*))$/i.exec($(this).text());
+          var cf = /^wfe-font-color:(?:([a-z]*)|rgb:([0-9a-f]*))$/i.exec($(this).text());
           if(cf != null && cf[1] != null) {
             if(allColor.hasOwnProperty(cf[1].toUpperCase()))
               colorF = new Color(allColor[cf[1].toUpperCase()]);
