@@ -1,4 +1,3 @@
-
 (function($){
     var isPresenter = true;
     var prev_isPresenter = isPresenter;
@@ -69,13 +68,30 @@
         .attr("id","goParent")
         .click(goParent)
         .text("<"));
+      document.addEventListener('keyup', shortcut, false);
     };
     var deleteCSS = function() {
       $('#injectCSS').remove();
       $('#goParent').remove();
+      document.removeEventListener('keyup', shortcut, false);
     };
+
+    function shortcut(e) {
+        e = e || window.event;
+        if ((e.ctrlKey && e.keyCode == '38') || (e.keyCode == '33')) {
+          var path = $('meta[name=urlPrevious]').attr("content");
+          if(path!= "") location.href = path;
+        }
+        else if ((e.ctrlKey && e.keyCode == '40') || (e.keyCode == '34')) {
+          var path = $('meta[name=urlNext]').attr("content");
+          if(path!= "") location.href = path;
+        }
+    };
+
     var startWorking = function() {
       document.addEventListener("DOMNodeInserted", startTimer);
+      document.head.appendChild(elt);
+      document.head.appendChild(elt2);
       if(isPresenter) addCSS(); else deleteCSS();
       chrome.storage.onChanged.addListener(function(changes, namespace) {
         if ("presenter" in changes) {
@@ -99,6 +115,49 @@
 		type: 'showIcon'
 	}, function() {});
 }) (jQuery);
+
+var elt = document.createElement("script");
+elt.innerHTML =
+'function updateUrlSibling(){ \n'+
+'  var urlPrevious=""; \n'+
+'  var urlNext=""; \n'+
+'  var selected = project_tree.getProjectReferenceFromDomProject(selectOnActivePage(".selected")); \n'+
+'  var previous = selected.getPreviousPotentiallyVisibleSibling(); \n'+
+'  if (previous != null){ \n'+
+'    urlPrevious = "https://workflowy.com/#/" + previous.getUniqueIdentifierWithTruncatedProjectIds().split(":")[1]; \n'+
+'  } \n'+
+'  var next = selected.getNextPotentiallyVisibleSibling(); \n'+
+'  if (next != null){ \n'+
+'    urlNext = "https://workflowy.com/#/" + next.getUniqueIdentifierWithTruncatedProjectIds().split(":")[1]; \n'+
+'  } \n'+
+'  $("[name=\'urlPrevious\']").attr("content", urlPrevious); \n'+
+'  $("[name=\'urlNext\']").attr("content", urlNext); \n'+
+'}; \n';
+
+var elt2 = document.createElement("script");
+elt2.innerHTML =
+'var oldURL = ""; \n'+
+'var currentURL = window.location.href;  \n'+
+'$("head").append($("<meta>").attr("name", "urlPrevious").attr("content", "")); \n'+
+'$("head").append($("<meta>").attr("name", "urlNext").attr("content", "")); \n'+
+'function checkURLchange(){ \n'+
+'  currentURL = window.location.href;  \n'+
+'  if(currentURL != oldURL){ \n'+
+'    updateUrlSibling(); \n'+
+'    oldURL = currentURL; \n'+
+'  } \n'+
+'} \n'+
+'function checkDocumentReady() { \n'+
+'  if(READY_FOR_DOCUMENT_READY == false) { \n'+
+'    window.setTimeout(checkDocumentReady, 1000); \n'+
+'  } else { \n'+
+'    setInterval(function(){ \n'+
+'      checkURLchange(); \n'+
+'    }, 1000); \n'+
+'  }; \n'+
+'}; \n'+
+'checkDocumentReady(); \n';
+
 
 
 class Color{
