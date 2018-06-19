@@ -16,7 +16,8 @@ String.prototype.replaceAll = function(find, replace) {
             styles[properties[p].name]="";
           }
         }
-        
+        styles["line-height"] = "1.3em";
+
         if(!previewColours) node.removeAttr('style');
         else{
           node.children(".contentTag").children(".contentTagText").each(function() {
@@ -212,6 +213,37 @@ var properties = {
   		var value = attr[1].toUpperCase().replaceAll("_", " ");
       if(allFont.hasOwnProperty(value))
         return allFont[value];
+    }
+    return "";
+  }),
+  bold: new Propertie("font-weight", /^wfe-font-weight:([a-z]*)$/i, function(attr){
+    if(attr != null && attr[1] != null) {
+      if(attr[1].toUpperCase() == "BOLD")
+        return "bold";
+      else if (attr[1].toUpperCase() == "NORMAL")
+        return "normal";
+    }
+    return "";
+  }),
+  italic: new Propertie("font-style", /^wfe-font-style:([a-z]*)$/i, function(attr){
+    if(attr != null && attr[1] != null) {
+      if(attr[1].toUpperCase() == "ITALIC")
+        return "italic";
+      else if (attr[1].toUpperCase() == "NORMAL")
+        return "normal";
+    }
+    return "";
+  }),
+  underline: new Propertie("text-decoration", /^wfe-text-decoration:([a-z]*)$/i, function(attr){
+    if(attr != null && attr[1] != null) {
+      if(attr[1].toUpperCase() == "UNDERLINE")
+        return "underline";
+    }
+    return "";
+  }),
+  size: new Propertie("font-size", /^wfe-font-size:([0-9]*)$/i, function(attr){
+    if(attr != null && attr[1] != null && attr[1]>0) {
+      return attr[1]+"px";
     }
     return "";
   })
