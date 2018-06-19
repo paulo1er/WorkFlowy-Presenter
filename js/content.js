@@ -1,3 +1,7 @@
+String.prototype.replaceAll = function(find, replace) {
+    return this.split(find).join(replace);
+};
+
 (function($){
     var isPresenter = true;
     var previewColours = true;
@@ -6,10 +10,13 @@
     var updateNodes = function() {
       $(".content").each(function() {
         var node = $(this);
-        var styles = {
-          "background-color": "",
-          "color": ""
-        };
+        var styles = {};
+        for (var p in properties) {
+          if (properties.hasOwnProperty(p)){
+            styles[properties[p].name]="";
+          }
+        }
+        
         if(!previewColours) node.removeAttr('style');
         else{
           node.children(".contentTag").children(".contentTagText").each(function() {
@@ -187,21 +194,24 @@ class Propertie{
 }
 var properties = {
   background: new Propertie("background-color", /^wfe-background:(?:([a-z]*)|rgb:([0-9a-f]*))$/i, function(attr){
-    if(attr != null && attr[1] != null && allColor.hasOwnProperty(attr[1].toUpperCase())) {
+    if(attr != null && attr[1] != null && allColor.hasOwnProperty(attr[1].toUpperCase()))
       return (new Color(allColor[attr[1].toUpperCase()])).toString();
-    }
-    else if(attr != null && attr[2] != null && (attr[2].length==3 ||attr[2].length==6)) {
+    else if(attr != null && attr[2] != null && (attr[2].length==3 ||attr[2].length==6))
       return hexaToColor(attr[2]).toString();
-    }
     return "";
   }),
   color: new Propertie("color", /^wfe-font-color:(?:([a-z]*)|rgb:([0-9a-f]*))$/i, function(attr){
-    if(attr != null && attr[1] != null) {
-      if(allColor.hasOwnProperty(attr[1].toUpperCase()))
-        return (new Color(allColor[attr[1].toUpperCase()])).toString();
-    }
-    else if(attr != null && attr[2] != null && (attr[2].length==3 ||attr[2].length==6)) {
+    if(attr != null && attr[1] != null && allColor.hasOwnProperty(attr[1].toUpperCase()))
+      return (new Color(allColor[attr[1].toUpperCase()])).toString();
+    else if(attr != null && attr[2] != null && (attr[2].length==3 ||attr[2].length==6))
       return hexaToColor(attr[2]).toString();
+    return "";
+  }),
+  font: new Propertie("font-family", /^wfe-font-face:([a-z_]*)$/i, function(attr){
+    if(attr != null && attr[1] != null) {
+  		var value = attr[1].toUpperCase().replaceAll("_", " ");
+      if(allFont.hasOwnProperty(value))
+        return allFont[value];
     }
     return "";
   })
@@ -360,3 +370,20 @@ var allColor={
 		DARKSLATEGRAY : [47,79,79],
 		BLACK : [0,0,0]
 };
+
+var allFont ={
+	"ARIAL" : "Arial",
+	"TIMES NEW ROMAN" :  "Times New Roman",
+	"COURIER" : "Courier New",
+	"SYMBOL" : "Symbol",
+	"GEORGIA" : "Georgia",
+	"PALATINO LINOTYPE" : "Palatino Linotype",
+	"ARIAL BLACK" : "Arial Black",
+	"COMIC SANS MS" : "Comic Sans MS",
+	"IMPACT" : "Impact",
+	"LUCIDA SANS UNICODE" : "Lucida Sans Unicode",
+	"TAHOMA" : "Tahoma",
+	"TREBUCHET MS" : "Trebuchet MS",
+	"VERDANA" : "Verdana",
+	"LUCIDA CONSOLE" : "Lucida Console"
+}
