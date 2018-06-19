@@ -8,7 +8,7 @@ String.prototype.replaceAll = function(find, replace) {
     var prev_isPresenter = isPresenter;
     var timerUpdateNodes;
     var updateNodes = function() {
-      $(".content").each(function() {
+      $(".selected .content").each(function() {
         var node = $(this);
         var styles = {};
         for (var p in properties) {
