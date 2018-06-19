@@ -3,41 +3,26 @@
     var previewColours = true;
     var prev_isPresenter = isPresenter;
     var timerUpdateNodes;
-    function hexaToColor(hexa){
-      var c = hexa.split('');
-      if(c.length == 3){
-          c= [c[0], c[0], c[1], c[1], c[2], c[2]];
-      }
-      c= '0x'+c.join('');
-      return (new Color([(c>>16)&255, (c>>8)&255, c&255]));
-    }
     var updateNodes = function() {
       $(".content").each(function() {
         var node = $(this);
-        var colorB = null;
-        var colorF = null;
-        node.children(".contentTag").children(".contentTagText").each(function() {
-          var cb = /^wfe-background:(?:([a-z]*)|rgb:([0-9a-f]*))$/i.exec($(this).text());
-          if(cb != null && cb[1] != null) {
-            if(allColor.hasOwnProperty(cb[1].toUpperCase()))
-              colorB = new Color(allColor[cb[1].toUpperCase()]);
-          }
-          else if(cb != null && cb[2] != null && (cb[2].length==3 ||cb[2].length==6)) {
-            colorB = hexaToColor(cb[2]);
-          }
-          var cf = /^wfe-font-color:(?:([a-z]*)|rgb:([0-9a-f]*))$/i.exec($(this).text());
-          if(cf != null && cf[1] != null) {
-            if(allColor.hasOwnProperty(cf[1].toUpperCase()))
-              colorF = new Color(allColor[cf[1].toUpperCase()]);
-          }
-          else if(cf != null && cf[2] != null && (cf[2].length==3 ||cf[2].length==6)) {
-            colorF = hexaToColor(cf[2]);
-          }
-        });
-        if(colorB && previewColours) node.css("background-color", colorB.toString());
-        else node.css("background-color", "");
-        if(colorF && previewColours) node.css("color", colorF.toString());
-        else node.css("color", "");
+        var styles = {
+          "background-color": "",
+          "color": ""
+        };
+        if(!previewColours) node.removeAttr('style');
+        else{
+          node.children(".contentTag").children(".contentTagText").each(function() {
+            var tagText = $(this).text();
+            for (var p in properties) {
+              if (properties.hasOwnProperty(p)){
+                var value = properties[p].val(tagText);
+                if(value!="") styles[properties[p].name] = value;
+              }
+            }
+          });
+          node.css(styles);
+        }
       });
       clearInterval(timerUpdateNodes);
     };
@@ -180,6 +165,47 @@ class Color{
 	toString(){return "rgb("+this.Red+", "+this.Green+", "+this.Blue+")"}
 };
 
+function hexaToColor(hexa){
+  var c = hexa.split('');
+  if(c.length == 3){
+      c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+  }
+  c= '0x'+c.join('');
+  return (new Color([(c>>16)&255, (c>>8)&255, c&255]));
+}
+
+class Propertie{
+  constructor(name, regex, exec){
+    this.name = name;
+    this.regex = regex;
+    this.exec = exec;
+  }
+  val(tagText){
+    var attr = this.regex.exec(tagText);
+    return this.exec(attr);
+  }
+}
+var properties = {
+  background: new Propertie("background-color", /^wfe-background:(?:([a-z]*)|rgb:([0-9a-f]*))$/i, function(attr){
+    if(attr != null && attr[1] != null && allColor.hasOwnProperty(attr[1].toUpperCase())) {
+      return (new Color(allColor[attr[1].toUpperCase()])).toString();
+    }
+    else if(attr != null && attr[2] != null && (attr[2].length==3 ||attr[2].length==6)) {
+      return hexaToColor(attr[2]).toString();
+    }
+    return "";
+  }),
+  color: new Propertie("color", /^wfe-font-color:(?:([a-z]*)|rgb:([0-9a-f]*))$/i, function(attr){
+    if(attr != null && attr[1] != null) {
+      if(allColor.hasOwnProperty(attr[1].toUpperCase()))
+        return (new Color(allColor[attr[1].toUpperCase()])).toString();
+    }
+    else if(attr != null && attr[2] != null && (attr[2].length==3 ||attr[2].length==6)) {
+      return hexaToColor(attr[2]).toString();
+    }
+    return "";
+  })
+}
 
 var allColor={
 	//Pink colors
