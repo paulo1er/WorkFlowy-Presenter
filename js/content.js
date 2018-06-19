@@ -246,6 +246,19 @@ var properties = {
       return attr[1]+"px";
     }
     return "";
+  }),
+  textAlign: new Propertie("text-align", /^wfe-text-align:([a-z]*)$/i, function(attr){
+    if(attr != null && attr[1] != null) {
+      if(attr[1].toUpperCase() == "CENTER")
+        return "center";
+      else if (attr[1].toUpperCase() == "LEFT")
+        return "left";
+      else if (attr[1].toUpperCase() == "RIGHT")
+        return "right";
+      else if (attr[1].toUpperCase() == "JUSTIFY")
+        return "justify";
+    }
+    return "";
   })
 }
 
