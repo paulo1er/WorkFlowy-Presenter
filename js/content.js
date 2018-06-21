@@ -3,7 +3,8 @@ String.prototype.replaceAll = function(find, replace) {
 };
 
 (function($){
-    var isPresenter = true;
+    var isPresenter = false;
+    var isLatexRender = false;
     var previewColours = true;
     var prev_isPresenter = isPresenter;
     var timerUpdateNodes;
@@ -131,11 +132,26 @@ String.prototype.replaceAll = function(find, replace) {
 
     var startWorking = function() {
       document.addEventListener("DOMNodeInserted", startTimer);
-      var script=document.createElement('script');
-      script.innerHTML=injectJS;
-      document.getElementsByTagName('head')[0].appendChild(script);
-      addControllers();
+
+      var s = document.createElement('script');
+      s.src = chrome.extension.getURL("js/render.js");
+      (document.head||document.documentElement).appendChild(s);
+
+      s = document.createElement('script');
+      s.src = chrome.extension.getURL("js/inject.js");
+      (document.head||document.documentElement).appendChild(s);
+
+      //addControllers();
+
       if(isPresenter) addCSS(); else deleteCSS();
+
+      var metaRender = $("[name=\'rendering\']");
+      if(!metaRender.length){
+        metaRender = $("<meta>").attr("name", "rendering").attr("content", isLatexRender);
+        $("head").append(metaRender);
+      }
+      metaRender.attr("content", isLatexRender);
+
       chrome.storage.onChanged.addListener(function(changes, namespace) {
         if ("presenter" in changes) {
           prev_isPresenter = isPresenter;
@@ -150,14 +166,19 @@ String.prototype.replaceAll = function(find, replace) {
           previewColours = changes.previewColours.newValue;
           startTimer();
         };
+        if ("isLatexRender" in changes) {
+          isLatexRender = changes.isLatexRender.newValue;
+          metaRender.attr("content", isLatexRender);
+        };
        });
     };
     var callbackGetValue = function(vals) {
       isPresenter = vals.presenter;
       previewColours = vals.previewColours;
+      isLatexRender = vals.isLatexRender;
       startWorking();
     };
-  chrome.storage.sync.get({"presenter":true, "previewColours":true}, callbackGetValue);
+  chrome.storage.sync.get({"presenter":false, "previewColours":true, "isLatexRender":true}, callbackGetValue);
 
 	chrome.runtime.sendMessage({
 		type: 'showIcon'

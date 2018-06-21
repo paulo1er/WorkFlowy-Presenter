@@ -1,4 +1,3 @@
-var injectJS = `
 function updateUrlSibling(){
   var urlPrevious="";
   var urlNext="";
@@ -19,6 +18,7 @@ var oldURL = "";
 var currentURL = window.location.href;
 $("head").append($("<meta>").attr("name", "urlPrevious").attr("content", ""));
 $("head").append($("<meta>").attr("name", "urlNext").attr("content", ""));
+
 function checkURLchange(){
   currentURL = window.location.href;
   if(currentURL != oldURL){
@@ -27,14 +27,8 @@ function checkURLchange(){
   }
 }
 
-function checkDocumentReady() {
-  if(READY_FOR_DOCUMENT_READY == false) {
-    window.setTimeout(checkDocumentReady, 1000);
-  } else {
-    setInterval(function(){
-      checkURLchange();
-    }, 1000);
-  };
-};
-checkDocumentReady();
-`;
+$(window).load(function() {
+  setInterval(function(){
+    checkURLchange();
+  }, 1000);
+});

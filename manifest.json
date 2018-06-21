@@ -11,7 +11,7 @@
   "content_scripts": [
     {
       "matches": ["https://workflowy.com/*"],
-      "js": ["js/jquery.min.js", "js/inject.js", "js/content.js"]
+      "js": ["js/jquery.min.js", "js/content.js"]
     }
   ],
   "icons": {
@@ -28,6 +28,7 @@
   "options_page": "popup.html",
   "web_accessible_resources":  [
     "css/*.css",
-    "js/*"
+    "js/render.js",
+    "js/inject.js"
   ]
 }
