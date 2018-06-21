@@ -1,44 +1,40 @@
+String.prototype.replaceAll = function(find, replace) {
+    return this.split(find).join(replace);
+};
+
 (function($){
-    var isPresenter = true;
+    var isPresenter = false;
+    var isLatexRender = false;
+    var previewColours = true;
+    var lockContent = false;
+
     var prev_isPresenter = isPresenter;
     var timerUpdateNodes;
     var updateNodes = function() {
-      $(".content").each(function() {
+      $(".selected .content").each(function() {
+        $(this).attr('contentEditable', !lockContent);
         var node = $(this);
-        var colorB = null;
-        var colorF = null;
-        node.children(".contentTag").children(".contentTagText").each(function() {
-          var cb = /^wfe-background:(?:([a-z]*)|rgb:([0-9a-f]*))$/i.exec($(this).text());
-          if(cb != null && cb[1] != null) {
-            if(allColor.hasOwnProperty(cb[1].toUpperCase()))
-              colorB = new Color(allColor[cb[1].toUpperCase()]);
+        var styles = {};
+        for (var p in properties) {
+          if (properties.hasOwnProperty(p)){
+            styles[properties[p].name]="";
           }
-          else if(cb != null && cb[2] != null && (cb[2].length==3 ||cb[2].length==6)) {
-            var c = cb[2].split('');
-            if(c.length == 3){
-                c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+        }
+        styles["line-height"] = "1.3em";
+
+        if(!previewColours) node.removeAttr('style');
+        else{
+          node.children(".contentTag").children(".contentTagText").each(function() {
+            var tagText = $(this).text();
+            for (var p in properties) {
+              if (properties.hasOwnProperty(p)){
+                var value = properties[p].val(tagText);
+                if(value!="") styles[properties[p].name] = value;
+              }
             }
-            c= '0x'+c.join('');
-            colorB = new Color([(c>>16)&255, (c>>8)&255, c&255]);
-          }
-          var cf = /^wfe-font-color:(?:([a-z]*)|rgb:([0-9a-f]*))$/i.exec($(this).text());
-          if(cf != null && cf[1] != null) {
-            if(allColor.hasOwnProperty(cf[1].toUpperCase()))
-              colorF = new Color(allColor[cf[1].toUpperCase()]);
-          }
-          else if(cf != null && cf[2] != null && (cf[2].length==3 ||cf[2].length==6)) {
-            var c = cf[2].split('');
-            if(c.length == 3){
-                c= [c[0], c[0], c[1], c[1], c[2], c[2]];
-            }
-            c= '0x'+c.join('');
-            colorF = new Color([(c>>16)&255, (c>>8)&255, c&255]);
-          }
-        });
-        if(!colorB) node.css("background-color", "");
-        else node.css("background-color", colorB.toString());
-        if(!colorF) node.css("color", "");
-        else node.css("color", colorF.toString());
+          });
+          node.css(styles);
+        }
       });
       clearInterval(timerUpdateNodes);
     };
@@ -76,22 +72,7 @@
       document.removeEventListener('keyup', shortcut, false);
     };
 
-    function shortcut(e) {
-        e = e || window.event;
-        if ((e.ctrlKey && e.keyCode == '38') || (e.keyCode == '33')) {
-          var path = $('meta[name=urlPrevious]').attr("content");
-          if(path!= "") location.href = path;
-        }
-        else if ((e.ctrlKey && e.keyCode == '40') || (e.keyCode == '34')) {
-          var path = $('meta[name=urlNext]').attr("content");
-          if(path!= "") location.href = path;
-        }
-    };
-
-    var startWorking = function() {
-      document.addEventListener("DOMNodeInserted", startTimer);
-      document.head.appendChild(elt);
-      document.head.appendChild(elt2);
+    function addControllers(){
       $('#controlsLeft').append("<hr>")
       var input = $("<input>").attr("type","color").val("#000000").hide();
       input.on("change",function() {
@@ -109,7 +90,7 @@
         $(this).val("#000000");
         content.blur();
       });
-      var a =  $("<a>").text("font color");
+      var a =  $("<a>").text("Font color");
       a.click(function(){
         input.click();
       })
@@ -132,13 +113,55 @@
         $(this).val("#FFFFFF");
         content.blur();
       });
-      var a2 =  $("<a>").text("background");
+      var a2 =  $("<a>").text("Background");
       a2.click(function(){
         input2.click();
       })
       $('#controlsLeft').append(input2);
       $('#controlsLeft').append(a2);
+    }
+
+    function shortcut(e) {
+        e = e || window.event;
+        if ((e.ctrlKey && e.keyCode == '38') || (e.keyCode == '33')) {
+          var path = $('meta[name=urlPrevious]').attr("content");
+          if(path!= "") location.href = path;
+        }
+        else if ((e.ctrlKey && e.keyCode == '40') || (e.keyCode == '34')) {
+          var path = $('meta[name=urlNext]').attr("content");
+          if(path!= "") location.href = path;
+        }
+    };
+
+    var startWorking = function() {
+      document.addEventListener("DOMNodeInserted", startTimer);
+
+      var s = document.createElement('script');
+      s.src = chrome.extension.getURL("js/render.js");
+      (document.head||document.documentElement).appendChild(s);
+
+      s = document.createElement('script');
+      s.src = chrome.extension.getURL("js/inject.js");
+      (document.head||document.documentElement).appendChild(s);
+
+      //addControllers();
+
       if(isPresenter) addCSS(); else deleteCSS();
+
+      var metaRender = $("[name=\'rendering\']");
+      if(!metaRender.length){
+        metaRender = $("<meta>").attr("name", "rendering").attr("content", isLatexRender);
+        $("head").append(metaRender);
+      }
+      metaRender.attr("content", isLatexRender);
+
+      var metaLock = $("[name=\'lock\']");
+      if(!metaLock.length){
+        metaLock = $("<meta>").attr("name", "lock").attr("content", lockContent);
+        $("head").append(metaLock);
+      }
+      metaLock.attr("content", lockContent);
+
       chrome.storage.onChanged.addListener(function(changes, namespace) {
         if ("presenter" in changes) {
           prev_isPresenter = isPresenter;
@@ -149,62 +172,33 @@
           }
           startTimer();
         };
+        if ("previewColours" in changes) {
+          previewColours = changes.previewColours.newValue;
+          startTimer();
+        };
+        if ("isLatexRender" in changes) {
+          isLatexRender = changes.isLatexRender.newValue;
+          metaRender.attr("content", isLatexRender);
+        };
+        if ("lockContent" in changes) {
+          lockContent = changes.lockContent.newValue;
+          metaLock.attr("content", lockContent);
+        };
        });
     };
     var callbackGetValue = function(vals) {
       isPresenter = vals.presenter;
+      previewColours = vals.previewColours;
+      isLatexRender = vals.isLatexRender;
+      lockContent = vals.lockContent;
       startWorking();
     };
-  chrome.storage.sync.get({"presenter":true}, callbackGetValue);
+  chrome.storage.sync.get({"presenter":false, "previewColours":true, "isLatexRender":true, "lockContent":false}, callbackGetValue);
 
 	chrome.runtime.sendMessage({
 		type: 'showIcon'
 	}, function() {});
 }) (jQuery);
-
-var elt = document.createElement("script");
-elt.innerHTML =
-'function updateUrlSibling(){ \n'+
-'  var urlPrevious=""; \n'+
-'  var urlNext=""; \n'+
-'  var selected = project_tree.getProjectReferenceFromDomProject(selectOnActivePage(".selected")); \n'+
-'  var previous = selected.getPreviousPotentiallyVisibleSibling(); \n'+
-'  if (previous != null){ \n'+
-'    urlPrevious = "https://workflowy.com/#/" + previous.getUniqueIdentifierWithTruncatedProjectIds().split(":")[1]; \n'+
-'  } \n'+
-'  var next = selected.getNextPotentiallyVisibleSibling(); \n'+
-'  if (next != null){ \n'+
-'    urlNext = "https://workflowy.com/#/" + next.getUniqueIdentifierWithTruncatedProjectIds().split(":")[1]; \n'+
-'  } \n'+
-'  $("[name=\'urlPrevious\']").attr("content", urlPrevious); \n'+
-'  $("[name=\'urlNext\']").attr("content", urlNext); \n'+
-'}; \n';
-
-var elt2 = document.createElement("script");
-elt2.innerHTML =
-'var oldURL = ""; \n'+
-'var currentURL = window.location.href;  \n'+
-'$("head").append($("<meta>").attr("name", "urlPrevious").attr("content", "")); \n'+
-'$("head").append($("<meta>").attr("name", "urlNext").attr("content", "")); \n'+
-'function checkURLchange(){ \n'+
-'  currentURL = window.location.href;  \n'+
-'  if(currentURL != oldURL){ \n'+
-'    updateUrlSibling(); \n'+
-'    oldURL = currentURL; \n'+
-'  } \n'+
-'} \n'+
-'function checkDocumentReady() { \n'+
-'  if(READY_FOR_DOCUMENT_READY == false) { \n'+
-'    window.setTimeout(checkDocumentReady, 1000); \n'+
-'  } else { \n'+
-'    setInterval(function(){ \n'+
-'      checkURLchange(); \n'+
-'    }, 1000); \n'+
-'  }; \n'+
-'}; \n'+
-'checkDocumentReady(); \n';
-
-
 
 class Color{
 	constructor(args){
@@ -215,6 +209,94 @@ class Color{
 	toString(){return "rgb("+this.Red+", "+this.Green+", "+this.Blue+")"}
 };
 
+function hexaToColor(hexa){
+  var c = hexa.split('');
+  if(c.length == 3){
+      c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+  }
+  c= '0x'+c.join('');
+  return (new Color([(c>>16)&255, (c>>8)&255, c&255]));
+}
+
+class Propertie{
+  constructor(name, regex, exec){
+    this.name = name;
+    this.regex = regex;
+    this.exec = exec;
+  }
+  val(tagText){
+    var attr = this.regex.exec(tagText);
+    return this.exec(attr);
+  }
+}
+var properties = {
+  background: new Propertie("background-color", /^wfe-background:(?:([a-z]*)|rgb:([0-9a-f]*))$/i, function(attr){
+    if(attr != null && attr[1] != null && allColor.hasOwnProperty(attr[1].toUpperCase()))
+      return (new Color(allColor[attr[1].toUpperCase()])).toString();
+    else if(attr != null && attr[2] != null && (attr[2].length==3 ||attr[2].length==6))
+      return hexaToColor(attr[2]).toString();
+    return "";
+  }),
+  color: new Propertie("color", /^wfe-font-color:(?:([a-z]*)|rgb:([0-9a-f]*))$/i, function(attr){
+    if(attr != null && attr[1] != null && allColor.hasOwnProperty(attr[1].toUpperCase()))
+      return (new Color(allColor[attr[1].toUpperCase()])).toString();
+    else if(attr != null && attr[2] != null && (attr[2].length==3 ||attr[2].length==6))
+      return hexaToColor(attr[2]).toString();
+    return "";
+  }),
+  font: new Propertie("font-family", /^wfe-font-face:([a-z_]*)$/i, function(attr){
+    if(attr != null && attr[1] != null) {
+  		var value = attr[1].toUpperCase().replaceAll("_", " ");
+      if(allFont.hasOwnProperty(value))
+        return allFont[value];
+    }
+    return "";
+  }),
+  bold: new Propertie("font-weight", /^wfe-font-weight:([a-z]*)$/i, function(attr){
+    if(attr != null && attr[1] != null) {
+      if(attr[1].toUpperCase() == "BOLD")
+        return "bold";
+      else if (attr[1].toUpperCase() == "NORMAL")
+        return "normal";
+    }
+    return "";
+  }),
+  italic: new Propertie("font-style", /^wfe-font-style:([a-z]*)$/i, function(attr){
+    if(attr != null && attr[1] != null) {
+      if(attr[1].toUpperCase() == "ITALIC")
+        return "italic";
+      else if (attr[1].toUpperCase() == "NORMAL")
+        return "normal";
+    }
+    return "";
+  }),
+  underline: new Propertie("text-decoration", /^wfe-text-decoration:([a-z]*)$/i, function(attr){
+    if(attr != null && attr[1] != null) {
+      if(attr[1].toUpperCase() == "UNDERLINE")
+        return "underline";
+    }
+    return "";
+  }),
+  size: new Propertie("font-size", /^wfe-font-size:([0-9]*)$/i, function(attr){
+    if(attr != null && attr[1] != null && attr[1]>0) {
+      return attr[1]+"px";
+    }
+    return "";
+  }),
+  textAlign: new Propertie("text-align", /^wfe-text-align:([a-z]*)$/i, function(attr){
+    if(attr != null && attr[1] != null) {
+      if(attr[1].toUpperCase() == "CENTER")
+        return "center";
+      else if (attr[1].toUpperCase() == "LEFT")
+        return "left";
+      else if (attr[1].toUpperCase() == "RIGHT")
+        return "right";
+      else if (attr[1].toUpperCase() == "JUSTIFY")
+        return "justify";
+    }
+    return "";
+  })
+}
 
 var allColor={
 	//Pink colors
@@ -369,3 +451,20 @@ var allColor={
 		DARKSLATEGRAY : [47,79,79],
 		BLACK : [0,0,0]
 };
+
+var allFont ={
+	"ARIAL" : "Arial",
+	"TIMES NEW ROMAN" :  "Times New Roman",
+	"COURIER" : "Courier New",
+	"SYMBOL" : "Symbol",
+	"GEORGIA" : "Georgia",
+	"PALATINO LINOTYPE" : "Palatino Linotype",
+	"ARIAL BLACK" : "Arial Black",
+	"COMIC SANS MS" : "Comic Sans MS",
+	"IMPACT" : "Impact",
+	"LUCIDA SANS UNICODE" : "Lucida Sans Unicode",
+	"TAHOMA" : "Tahoma",
+	"TREBUCHET MS" : "Trebuchet MS",
+	"VERDANA" : "Verdana",
+	"LUCIDA CONSOLE" : "Lucida Console"
+}

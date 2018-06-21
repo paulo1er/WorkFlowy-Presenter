@@ -27,6 +27,8 @@
   "permissions": ["tabs", "storage"],
   "options_page": "popup.html",
   "web_accessible_resources":  [
-    "css/*.css"
+    "css/*.css",
+    "js/render.js",
+    "js/inject.js"
   ]
 }
