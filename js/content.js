@@ -6,10 +6,13 @@ String.prototype.replaceAll = function(find, replace) {
     var isPresenter = false;
     var isLatexRender = false;
     var previewColours = true;
+    var lockContent = false;
+
     var prev_isPresenter = isPresenter;
     var timerUpdateNodes;
     var updateNodes = function() {
       $(".selected .content").each(function() {
+        $(this).attr('contentEditable', !lockContent);
         var node = $(this);
         var styles = {};
         for (var p in properties) {
@@ -152,6 +155,13 @@ String.prototype.replaceAll = function(find, replace) {
       }
       metaRender.attr("content", isLatexRender);
 
+      var metaLock = $("[name=\'lock\']");
+      if(!metaLock.length){
+        metaLock = $("<meta>").attr("name", "lock").attr("content", lockContent);
+        $("head").append(metaLock);
+      }
+      metaLock.attr("content", lockContent);
+
       chrome.storage.onChanged.addListener(function(changes, namespace) {
         if ("presenter" in changes) {
           prev_isPresenter = isPresenter;
@@ -170,15 +180,20 @@ String.prototype.replaceAll = function(find, replace) {
           isLatexRender = changes.isLatexRender.newValue;
           metaRender.attr("content", isLatexRender);
         };
+        if ("lockContent" in changes) {
+          lockContent = changes.lockContent.newValue;
+          metaLock.attr("content", lockContent);
+        };
        });
     };
     var callbackGetValue = function(vals) {
       isPresenter = vals.presenter;
       previewColours = vals.previewColours;
       isLatexRender = vals.isLatexRender;
+      lockContent = vals.lockContent;
       startWorking();
     };
-  chrome.storage.sync.get({"presenter":false, "previewColours":true, "isLatexRender":true}, callbackGetValue);
+  chrome.storage.sync.get({"presenter":false, "previewColours":true, "isLatexRender":true, "lockContent":false}, callbackGetValue);
 
 	chrome.runtime.sendMessage({
 		type: 'showIcon'

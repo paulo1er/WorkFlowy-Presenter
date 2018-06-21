@@ -42,10 +42,10 @@ function startRendering(){
     if (timerRendering) {
       clearInterval(timerRendering);
     };
-    var focus = getCurrentlyFocusedContent();
+    var focus = READ_ONLY_MAIN_TREE ? null : getCurrentlyFocusedContent();
     var prev_focus = focus;
     timerRendering = setInterval(function(){
-      focus = getCurrentlyFocusedContent();
+      focus = READ_ONLY_MAIN_TREE ? null : getCurrentlyFocusedContent();
       if(focus != prev_focus){
         prev_focus = focus;
         $(".selected .content").removeClass("tex2jax_ignore").addClass("tex2jax_process");
