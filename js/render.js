@@ -5,14 +5,16 @@ var delimiters = delimiters_inline.concat(delimiters_display);
 // 1. custom mathjax configuration
 var s = document.createElement('script');
 s.type = "text/x-mathjax-config";
-s.text = 'MathJax.Hub.Config({\
-      tex2jax: {\
-        inlineMath: ' + JSON.stringify(delimiters_inline) + ',\
-        displayMath: ' + JSON.stringify(delimiters_display) + ',\
-        ignoreClass: "tex2jax_ignore" ,\
-        processClass: "tex2jax_process",\
-      }\
-  });';
+s.text =
+'MathJax.Hub.Config({\
+  showProcessingMessages: false,\
+  tex2jax: {\
+    inlineMath: ' + JSON.stringify(delimiters_inline) + ',\
+    displayMath: ' + JSON.stringify(delimiters_display) + ',\
+    ignoreClass: "tex2jax_ignore" ,\
+    processClass: "tex2jax_process",\
+  }\
+});';
 (document.head||document.documentElement).appendChild(s);
 
 // 2. mathjax itself
@@ -43,18 +45,14 @@ function startRendering(){
       clearInterval(timerRendering);
     };
     var focus = READ_ONLY_MAIN_TREE ? null : getCurrentlyFocusedContent();
-    var prev_focus = focus;
     timerRendering = setInterval(function(){
       focus = READ_ONLY_MAIN_TREE ? null : getCurrentlyFocusedContent();
-      if(focus != prev_focus){
-        prev_focus = focus;
-        $(".selected .content").removeClass("tex2jax_ignore").addClass("tex2jax_process");
-        if(focus) {
-          focus.removeClass("tex2jax_process").addClass("tex2jax_ignore");
-          mathjaxHtmlToText(focus);
-        }
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+      $(".selected .content").removeClass("tex2jax_ignore").addClass("tex2jax_process");
+      if(focus) {
+        focus.removeClass("tex2jax_process").addClass("tex2jax_ignore");
+        mathjaxHtmlToText(focus);
       }
+      MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
     }, 10);
 }
 
@@ -63,10 +61,21 @@ function stopRendering(){
   if (timerRendering) {
     clearInterval(timerRendering);
   };
-  $(".selected .content").each(function(){
-    $(this).addClass("tex2jax_ignore").removeClass("tex2jax_process");
-    mathjaxHtmlToText($(this));
-  });
+  timerRendering = setInterval(function(){
+    $(".selected .content").each(function(){
+      $(this).addClass("tex2jax_ignore").removeClass("tex2jax_process");
+      mathjaxHtmlToText($(this));
+    });
+  }, 1000);
+}
+
+function ignoreParent(){
+  setInterval(function(){
+    $(".parent > .name > .content").each(function(){
+      $(this).addClass("tex2jax_ignore").removeClass("tex2jax_process");
+      mathjaxHtmlToText($(this));
+    });
+  }, 1000);
 }
 
 function initRendering(){
@@ -77,6 +86,7 @@ function initRendering(){
     $("head").append(metaRender);
   }
   isRendering = metaRender.attr("content");
+  ignoreParent();
   if(isRendering == "true")startRendering();
   else stopRendering();
 
