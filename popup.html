@@ -3,25 +3,42 @@
 <head>
   <title> WorkFlowy Presenter, options </title>
   <script type="text/javascript" src="js/popup.js"></script>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-  <h2>WorkFlowy Presenter</h2>
-  <hr/>
-  <div>
-      <label for="presenter">Presenter mode:</label>
-      <input type="checkbox" id="presenter"></input>
-  </div>
-  <div>
-      <label for="previewColours">Preview styles:</label>
-      <input type="checkbox" id="previewColours"></input>
-  </div>
-  <div>
-      <label for="isLatexRender">Render LaTeX:</label>
-      <input type="checkbox" id="isLatexRender"></input>
-  </div>
-  <div>
-      <label for="lockContent">Lock Content:</label>
-      <input type="checkbox" id="lockContent"></input>
+  <div class="panel panel-info position-absolute" style="min-width:200px; min-height:100%; margin:0;">
+    <div class="panel-heading" id="popupTitle" style="padding:10px 0;">
+      <h5 style="margin: 0;">
+        <img src="image/icon19.png" style="float: none; margin: 0 10px;">
+        <span id="title">WorkFlowy Presenter</span>
+      </h5>
+    </div>
+    <div class="panel-body">
+      <div class="input-group input-group-sm">
+        <span class="input-group-addon">
+          <input type="checkbox" id="presenter" class="form-check-input">
+        </span>
+        <label class="form-control" for="presenter">Presenter mode</label>
+      </div>
+      <div class="input-group input-group-sm">
+        <span class="input-group-addon">
+          <input type="checkbox" id="lockContent" class="form-check-input">
+        </span>
+        <label class="form-control" for="lockContent">Lock Content</label>
+      </div>
+      <div class="input-group input-group-sm">
+        <span class="input-group-addon">
+          <input type="checkbox" id="previewColours" class="form-check-input">
+        </span>
+        <label class="form-control" for="previewColours">Preview styles</label>
+      </div>
+      <div class="input-group input-group-sm">
+        <span class="input-group-addon">
+          <input type="checkbox" id="isLatexRender" class="form-check-input">
+        </span>
+        <label class="form-control" for="isLatexRender">Render LaTeX</label>
+      </div>
+    </div>
   </div>
 </body>
 </html>
