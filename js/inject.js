@@ -23,6 +23,7 @@ function checkURLchange(){
   currentURL = window.location.href;
   if(currentURL != oldURL){
     updateUrlSibling();
+    $(".selected .content").removeClass("tex2jax_ignore").addClass("tex2jax_process");
     oldURL = currentURL;
   }
 }
