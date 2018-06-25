@@ -74,8 +74,8 @@ String.prototype.replaceAll = function(find, replace) {
 
     function addControllers(){
       $('#controlsLeft').append("<hr>")
-      var input = $("<input>").attr("type","color").val("#000000").hide();
-      input.on("change",function() {
+      var inputFontColor = $("<input>").attr("type","color").val("#000000").hide();
+      inputFontColor.on("change",function() {
         var content = $(this).parent().parent().parent().children(".content");
         content.children(".contentTag").children(".contentTagText").each(function() {
           var cf = /^wfe-font-color:(?:([a-z]*)|rgb:([0-9a-f]*))$/i.exec($(this).text());
@@ -90,15 +90,15 @@ String.prototype.replaceAll = function(find, replace) {
         $(this).val("#000000");
         content.blur();
       });
-      var a =  $("<a>").text("Font color");
-      a.click(function(){
-        input.click();
+      var aFontColor =  $("<a>").text("Font color");
+      aFontColor.click(function(){
+        inputFontColor.click();
       })
-      $('#controlsLeft').append(input);
-      $('#controlsLeft').append(a);
+      $('#controlsLeft').append(inputFontColor);
+      $('#controlsLeft').append(aFontColor);
 
-      var input2 = $("<input>").attr("type","color").val("#FFFFFF").hide();
-      input2.on("change",function() {
+      var inputBackground = $("<input>").attr("type","color").val("#FFFFFF").hide();
+      inputBackground.on("change",function() {
         var content = $(this).parent().parent().parent().children(".content");
         content.children(".contentTag").children(".contentTagText").each(function() {
           var cf = /^wfe-background:(?:([a-z]*)|rgb:([0-9a-f]*))$/i.exec($(this).text());
@@ -113,12 +113,12 @@ String.prototype.replaceAll = function(find, replace) {
         $(this).val("#FFFFFF");
         content.blur();
       });
-      var a2 =  $("<a>").text("Background");
-      a2.click(function(){
-        input2.click();
+      var aBackground =  $("<a>").text("Background");
+      aBackground.click(function(){
+        inputBackground.click();
       })
-      $('#controlsLeft').append(input2);
-      $('#controlsLeft').append(a2);
+      $('#controlsLeft').append(inputBackground);
+      $('#controlsLeft').append(aBackground);
     }
 
     function shortcut(e) {

@@ -4,11 +4,11 @@ function updateUrlSibling(){
   var selected = project_tree.getProjectReferenceFromDomProject(selectOnActivePage(".selected"));
   var previous = selected.getPreviousPotentiallyVisibleSibling();
   if (previous != null){
-    urlPrevious = "https://workflowy.com/#/" + previous.getUniqueIdentifierWithTruncatedProjectIds().split(":")[1];
+    urlPrevious = "https://workflowy.com/#/" + project_ids.truncateProjectId(previous.projectid);
   }
   var next = selected.getNextPotentiallyVisibleSibling();
   if (next != null){
-    urlNext = "https://workflowy.com/#/" + next.getUniqueIdentifierWithTruncatedProjectIds().split(":")[1];
+    urlNext = "https://workflowy.com/#/" + project_ids.truncateProjectId(next.projectid);
   }
   $("[name=\'urlPrevious\']").attr("content", urlPrevious);
   $("[name=\'urlNext\']").attr("content", urlNext);
@@ -22,8 +22,8 @@ $("head").append($("<meta>").attr("name", "urlNext").attr("content", ""));
 function checkURLchange(){
   currentURL = window.location.href;
   if(currentURL != oldURL){
-    updateUrlSibling();
     $(".selected .content").removeClass("tex2jax_ignore").addClass("tex2jax_process");
+    updateUrlSibling();
     oldURL = currentURL;
   }
 }
