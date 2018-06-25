@@ -28,14 +28,10 @@ function initValues(){
           option[name] = changes[name].newValue;
           $("#"+name).attr('checked', option[name]);
         };
+        warningOptionSelected();
       }
     }
   });
-
-  setInterval(function(){
-    if(!option["isLatexRender"] || option["lockContent"]) $("#needLock").hide();
-    else $("#needLock").show();
-  },100);
 }
 
 function callbackGetValue(vals){
@@ -45,6 +41,15 @@ function callbackGetValue(vals){
       $("#"+name).attr('checked', option[name]);
     }
   }
+  warningOptionSelected();
 }
 
-$("document").ready(initValues);
+function warningOptionSelected(){
+  if(!option["isLatexRender"] || option["lockContent"]) $("#needLock").hide();
+  else $("#needLock").show();
+}
+
+$(document).ready(function(){
+    initValues();
+    $('[data-toggle="tooltip"]').tooltip();
+});
