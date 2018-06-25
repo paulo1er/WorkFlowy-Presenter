@@ -33,7 +33,6 @@ $(window).load(function() {
     checkURLchange();
   }, 1000);
   initLockUnlock();
-  console.log(window);
 });
 
 

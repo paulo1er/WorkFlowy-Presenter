@@ -125,11 +125,11 @@ String.prototype.replaceAll = function(find, replace) {
         e = e || window.event;
         if ((e.ctrlKey && e.keyCode == '38') || (e.keyCode == '33')) {
           var path = $('meta[name=urlPrevious]').attr("content");
-          if(path!= "") location.href = path;
+          if(path && path!= "") location.href = path;
         }
         else if ((e.ctrlKey && e.keyCode == '40') || (e.keyCode == '34')) {
           var path = $('meta[name=urlNext]').attr("content");
-          if(path!= "") location.href = path;
+          if(path && path!= "") location.href = path;
         }
     };
 
