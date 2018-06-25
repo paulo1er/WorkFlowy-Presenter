@@ -6,8 +6,8 @@ var option = {
 }
 
 function onClick(){
-  var name = this.id;
-  option[name] = this.checked;
+  var name = $(this).attr('id');
+  option[name] = $(this).prop('checked');
   chrome.storage.sync.set(option, function(){});
 }
 
@@ -16,7 +16,7 @@ function initValues(){
 
   for (var name in option){
     if (option.hasOwnProperty(name)) {
-      document.getElementById(name).addEventListener("change", onClick);
+      $("#"+name).change(onClick);
     }
   }
 
@@ -26,14 +26,15 @@ function initValues(){
       if (option.hasOwnProperty(name)) {
         if (name in changes) {
           option[name] = changes[name].newValue;
-          document.getElementById(name).checked = option[name];
+          $("#"+name).attr('checked', option[name]);
         };
       }
     }
   });
 
   setInterval(function(){
-    document.getElementById("needLock").hidden = !option["isLatexRender"] || option["lockContent"];
+    if(!option["isLatexRender"] || option["lockContent"]) $("#needLock").hide();
+    else $("#needLock").show();
   },100);
 }
 
@@ -41,9 +42,9 @@ function callbackGetValue(vals){
   option=vals;
   for (var name in option){
     if (option.hasOwnProperty(name)) {
-      document.getElementById(name).checked = option[name];
+      $("#"+name).attr('checked', option[name]);
     }
   }
 }
 
-document.addEventListener( "DOMContentLoaded", initValues );
+$("document").ready(initValues);
