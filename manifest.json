@@ -26,6 +26,7 @@
   "web_accessible_resources":  [
     "css/*.css",
     "js/render.js",
-    "js/inject.js"
+    "js/inject.js",
+    "js/image.js"
   ]
 }

@@ -5,6 +5,7 @@ String.prototype.replaceAll = function(find, replace) {
 (function($){
     var isPresenter = false;
     var isLatexRender = false;
+    var isImageRender = false;
     var previewColours = true;
     var lockContent = false;
 
@@ -140,6 +141,10 @@ String.prototype.replaceAll = function(find, replace) {
       s.src = chrome.extension.getURL("js/render.js");
       (document.head||document.documentElement).appendChild(s);
 
+      var s = document.createElement('script');
+      s.src = chrome.extension.getURL("js/image.js");
+      (document.head||document.documentElement).appendChild(s);
+
       s = document.createElement('script');
       s.src = chrome.extension.getURL("js/inject.js");
       (document.head||document.documentElement).appendChild(s);
@@ -154,6 +159,13 @@ String.prototype.replaceAll = function(find, replace) {
         $("head").append(metaRender);
       }
       metaRender.attr("content", isLatexRender);
+
+      var metaRenderImage = $("[name=\'renderingImage\']");
+      if(!metaRenderImage.length){
+        metaRenderImage = $("<meta>").attr("name", "renderingImage").attr("content", isImageRender);
+        $("head").append(metaRenderImage);
+      }
+      metaRenderImage.attr("content", isImageRender);
 
       var metaLock = $("[name=\'lock\']");
       if(!metaLock.length){
@@ -180,6 +192,10 @@ String.prototype.replaceAll = function(find, replace) {
           isLatexRender = changes.isLatexRender.newValue;
           metaRender.attr("content", isLatexRender);
         };
+        if ("isImageRender" in changes) {
+          isImageRender = changes.isImageRender.newValue;
+          metaRenderImage.attr("content", isImageRender);
+        };
         if ("lockContent" in changes) {
           lockContent = changes.lockContent.newValue;
           metaLock.attr("content", lockContent);
@@ -190,10 +206,11 @@ String.prototype.replaceAll = function(find, replace) {
       isPresenter = vals.presenter;
       previewColours = vals.previewColours;
       isLatexRender = vals.isLatexRender;
+      isImageRender = vals.isImageRender;
       lockContent = vals.lockContent;
       startWorking();
     };
-  chrome.storage.sync.get({"presenter":false, "previewColours":true, "isLatexRender":true, "lockContent":false}, callbackGetValue);
+  chrome.storage.sync.get({"presenter":false, "previewColours":true, "isLatexRender":true, "isImageRender":true, "lockContent":false}, callbackGetValue);
 
 	chrome.runtime.sendMessage({
 		type: 'showIcon'
