@@ -8,7 +8,8 @@
 
   RegexImage = /!\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
   function textToImageHtml(b) {
-    b.html(b.html().replace(RegexImage, "<img src='$2' alt='$1' style='display: block;max-width:"+b.width()+"px;width: auto;height: auto;'>"));
+    if(RegexImage.test(b.html()))
+      b.html(b.html().replace(RegexImage, "<img src='$2' alt='$1' style='display: block;max-width:"+b.width()+"px;width: auto;height: auto;'>"));
     return b.html();
   }
 
@@ -22,7 +23,7 @@
       timerRendering = setInterval(function(){
         focus = READ_ONLY_MAIN_TREE ? null : getCurrentlyFocusedContent();
         $(".selected .content").each(function(){
-          if(focus && ($(this).html() == focus.html()) ) {
+          if(focus && (focus[0].isSameNode($(this)[0])) ) {
             imageHtmlToText($(this));
           }
           else{

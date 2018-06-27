@@ -34,7 +34,7 @@
         $(this).replaceWith(delimiters_display[0][0] + $(this).html() + delimiters_display[0][1]) ;
       }
     });
-    return b.html().replace(/&lt;/ig, "<").replace(/&gt;/ig, ">").replace(/&nbsp;/ig, "\u00a0").replace(/&amp;/ig, "&");
+    return b.html();
   }
 
 
@@ -47,13 +47,19 @@
       var focus = READ_ONLY_MAIN_TREE ? null : getCurrentlyFocusedContent();
       timerRendering = setInterval(function(){
         focus = READ_ONLY_MAIN_TREE ? null : getCurrentlyFocusedContent();
-        $(".selected .content").removeClass("tex2jax_ignore").addClass("tex2jax_process");
-        if(focus) {
-          focus.removeClass("tex2jax_process").addClass("tex2jax_ignore");
-          mathjaxHtmlToText(focus);
-        }
+
+        $(".selected .content").each(function(){
+          if(focus && (focus[0].isSameNode($(this)[0])) ) {
+            focus.removeClass("tex2jax_process").addClass("tex2jax_ignore");
+            mathjaxHtmlToText(focus);
+          }
+          else{
+            $(this).removeClass("tex2jax_ignore").addClass("tex2jax_process");
+          }
+        });
+
         MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-      }, 10);
+      }, 100);
   }
 
   function stopRendering(){
@@ -94,7 +100,7 @@
       metaRender = $("[name=\'rendering\']");
       if(isRendering != metaRender.attr("content")){
         isRendering = metaRender.attr("content");
-        if(isRendering == "true")startRendering();
+        if(isRendering == "true") startRendering();
         else stopRendering();
       }
     }, 1000);
