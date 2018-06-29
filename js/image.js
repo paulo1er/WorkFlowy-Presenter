@@ -1,15 +1,29 @@
 (function(){
   function imageHtmlToText(b) {
     b.find("img").each(function() {
-      $(this).replaceWith('!['+$(this).attr("alt")+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+$(this).attr("src")+'">'+$(this).attr("src")+'</a>)') ;
+      $(this).parent().replaceWith('!['+$(this).attr("alt")+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+$(this).attr("src")+'">'+$(this).attr("src")+'</a>)') ;
     });
     return b.html();
   }
 
-  RegexImage = /!\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
+  var RegexImage = /!\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
   function textToImageHtml(b) {
     if(RegexImage.test(b.html()))
-      b.html(b.html().replace(RegexImage, "<img src='$2' alt='$1' style='display: block;max-width:"+b.width()+"px;width: auto;height: auto;'>"));
+      b.html(b.html().replace(RegexImage, "<a href='$2' class='image' target='_blank'><img src='$2' alt='$1' style='display: block;max-width:"+b.width()+"px;width: auto;height: auto;'></a>"));
+    return b.html();
+  }
+
+  function linkHtmlToText(b) {
+    b.find(".link").each(function() {
+      $(this).replaceWith('['+$(this).text()+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+$(this).attr("href")+'">'+$(this).attr("href")+'</a>)') ;
+    });
+    return b.html();
+  }
+
+  var RegexLink = /\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
+  function textToLinkHtml(b) {
+    if(RegexLink.test(b.html()))
+      b.html(b.html().replace(RegexLink, "<a href='$2' class='contentLink link' target='_blank'>$1</a>"));
     return b.html();
   }
 
@@ -25,9 +39,11 @@
         $(".selected .content").each(function(){
           if(focus && (focus[0].isSameNode($(this)[0])) ) {
             imageHtmlToText($(this));
+            linkHtmlToText($(this));
           }
           else{
             textToImageHtml($(this));
+            textToLinkHtml($(this));
           }
         });
       }, 100);
@@ -41,6 +57,7 @@
     timerRendering = setInterval(function(){
       $(".selected .content").each(function(){
         imageHtmlToText($(this));
+        linkHtmlToText($(this));
       });
     }, 1000);
   }
@@ -77,6 +94,7 @@
       if (is_mergeable) {
         var focus = this.getName().children(".content");
         imageHtmlToText(focus);
+        linkHtmlToText(focus);
       }
       return is_mergeable;
   }

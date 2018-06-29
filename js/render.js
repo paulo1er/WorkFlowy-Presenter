@@ -8,6 +8,7 @@
   s.text =
   'MathJax.Hub.Config({\
     showProcessingMessages: false,\
+    preview : "none",\
     tex2jax: {\
       inlineMath: ' + JSON.stringify(delimiters_inline) + ',\
       displayMath: ' + JSON.stringify(delimiters_display) + ',\
