@@ -157,10 +157,12 @@
       }
       return is_mergeable;
   }
-/*
+
   var oldGetTextForContent = content_text.getTextForContent;
-  content_text.getTextForContent = function() {
-    console.log("Coucou");
-    return oldProjectIsMergeable2.apply(this, arguments);
-  }*/
+  content_text.getTextForContent = function(e) {
+    imageHtmlToText(e);
+    linkHtmlToText(e);
+    emojiHtmlToText(e);
+    return oldGetTextForContent.apply(this, arguments);
+  }
 })();
