@@ -59,12 +59,7 @@ String.prototype.replaceAll = function(find, replace) {
           .attr("rel","stylesheet")
           .attr("type","text/css")
           .attr("href", path));
-      path = chrome.extension.getURL('css/emoji.css');
-      $('head').append($('<link>')
-          .attr("id","emojiCSS")
-          .attr("rel","stylesheet")
-          .attr("type","text/css")
-          .attr("href", path));
+
       $("#logo:not([class*='show'])").addClass("show");
       $("#searchForm:not([class*='show'])").addClass("show");
       $('#header').append($('<a>')
@@ -143,6 +138,14 @@ String.prototype.replaceAll = function(find, replace) {
     var startWorking = function() {
       document.addEventListener("DOMNodeInserted", startTimer);
 
+
+      var path = chrome.extension.getURL('css/emoji.css');
+      $('head').append($('<link>')
+          .attr("id","emojiCSS")
+          .attr("rel","stylesheet")
+          .attr("type","text/css")
+          .attr("href", path));
+
       var s = document.createElement('script');
       s.src = chrome.extension.getURL("js/render.js");
       (document.head||document.documentElement).appendChild(s);
@@ -154,6 +157,7 @@ String.prototype.replaceAll = function(find, replace) {
       s = document.createElement('script');
       s.src = chrome.extension.getURL("js/inject.js");
       (document.head||document.documentElement).appendChild(s);
+
 
       //addControllers();
 

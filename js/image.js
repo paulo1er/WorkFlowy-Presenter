@@ -105,6 +105,7 @@
 
 
   function initRenderingImage(){
+    console.log(window);
     var metaRender = $("[name=\'renderingImage\']");
     var isRendering;
     if(!metaRender.length){
@@ -113,12 +114,20 @@
     }
     isRendering = metaRender.attr("content");
 
-    var cssSheet = $('#emojiCSS')
-    $.when($.get(cssSheet[0].href))
-    .done(function(response) {
-      allEmoji = response.replace(/{([^\}]*)}/g, '').replace(/\,/g, '').replace(/\.em-svg\.em-([^\.]*)/g, '').split('.em-');
-    });
-
+    var cssSheet = $('#emojiCSS');
+    (function initAllEmoji(){
+      if(!cssSheet[0])
+        setInterval(function(){
+          cssSheet = $('#emojiCSS');
+          initAllEmoji();
+        }, 1000);
+      else{
+        $.when($.get(cssSheet[0].href))
+        .done(function(response) {
+          allEmoji = response.replace(/{([^\}]*)}/g, '').replace(/\,/g, '').replace(/\.em-svg\.em-([^\.]*)/g, '').split('.em-');
+        });
+      }
+    })();
 
     if(isRendering == "true") startRenderingImage();
     else stopRenderingImage();
@@ -148,4 +157,10 @@
       }
       return is_mergeable;
   }
+/*
+  var oldGetTextForContent = content_text.getTextForContent;
+  content_text.getTextForContent = function() {
+    console.log("Coucou");
+    return oldProjectIsMergeable2.apply(this, arguments);
+  }*/
 })();
