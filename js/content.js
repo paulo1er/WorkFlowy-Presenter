@@ -59,6 +59,12 @@ String.prototype.replaceAll = function(find, replace) {
           .attr("rel","stylesheet")
           .attr("type","text/css")
           .attr("href", path));
+      path = chrome.extension.getURL('css/emoji.css');
+      $('head').append($('<link>')
+          .attr("id","emojiCSS")
+          .attr("rel","stylesheet")
+          .attr("type","text/css")
+          .attr("href", path));
       $("#logo:not([class*='show'])").addClass("show");
       $("#searchForm:not([class*='show'])").addClass("show");
       $('#header').append($('<a>')

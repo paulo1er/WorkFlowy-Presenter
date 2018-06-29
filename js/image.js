@@ -1,4 +1,5 @@
 (function(){
+
   function imageHtmlToText(b) {
     b.find("img").each(function() {
       $(this).parent().replaceWith('!['+$(this).attr("alt")+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+$(this).attr("src")+'">'+$(this).attr("src")+'</a>)') ;
@@ -27,6 +28,43 @@
     return b.html();
   }
 
+  var allEmoji = [];
+  function emojiHtmlToText(b) {
+    b.find(".em").each(function() {
+      $(this).replaceWith(':'+$(this).attr('data-text')+':') ;
+    });
+    return b.html();
+  }
+
+  var RegexEmoji = /:([-a-z_0-9]*):/g;
+  function textToEmojiHtml(b) {
+    var result = "";
+    var text = b.html();
+    var match = RegexEmoji.exec(text);
+    var i_prev = 0;
+    while(match!=null){
+      var i = match.index;
+      if(i!=i_prev){
+        result += text.slice(i_prev, i);
+      }
+      i_prev= RegexEmoji.lastIndex;
+      if(allEmoji.includes(match[1])) {
+        result += "<i class='em em-"+match[1]+"' data-text='"+match[1]+"'></i>"
+      }
+      else {
+        result += ":"+match[1]+":"
+      }
+      match = RegexEmoji.exec(text);
+    }
+    if(text.length!=i_prev){
+      result += text.slice(i_prev, text.length);
+    }
+
+    if(result != b.html())
+      b.html(result);
+    return b.html();
+  }
+
   var timerRendering;
   function startRenderingImage(){
       console.log("START !");
@@ -40,10 +78,12 @@
           if(focus && (focus[0].isSameNode($(this)[0])) ) {
             imageHtmlToText($(this));
             linkHtmlToText($(this));
+            emojiHtmlToText($(this));
           }
           else{
             textToImageHtml($(this));
             textToLinkHtml($(this));
+            textToEmojiHtml($(this));
           }
         });
       }, 100);
@@ -58,6 +98,7 @@
       $(".selected .content").each(function(){
         imageHtmlToText($(this));
         linkHtmlToText($(this));
+        emojiHtmlToText($(this));
       });
     }, 1000);
   }
@@ -71,6 +112,14 @@
       $("head").append(metaRender);
     }
     isRendering = metaRender.attr("content");
+
+    var cssSheet = $('#emojiCSS')
+    $.when($.get(cssSheet[0].href))
+    .done(function(response) {
+      allEmoji = response.replace(/{([^\}]*)}/g, '').replace(/\,/g, '').replace(/\.em-svg\.em-([^\.]*)/g, '').split('.em-');
+    });
+
+
     if(isRendering == "true") startRenderingImage();
     else stopRenderingImage();
 
@@ -95,6 +144,7 @@
         var focus = this.getName().children(".content");
         imageHtmlToText(focus);
         linkHtmlToText(focus);
+        emojiHtmlToText(focus);
       }
       return is_mergeable;
   }
