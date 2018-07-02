@@ -164,15 +164,15 @@
 
   var oldProjectIsMergeable2 = jQuery.fn.projectIsMergable;
   jQuery.fn.projectIsMergable = function(a) {
-      var is_mergeable = oldProjectIsMergeable2.apply(this, arguments);
-      if (is_mergeable) {
-        var focus = this.getName().children(".content");
-        imageHtmlToText(focus);
-        videoHtmlToText(focus);
-        linkHtmlToText(focus);
-        emojiHtmlToText(focus);
-      }
-      return is_mergeable;
+    var is_mergeable = oldProjectIsMergeable2.apply(this, arguments);
+    if (is_mergeable) {
+      var focus = this.getName().children(".content");
+      imageHtmlToText(focus);
+      videoHtmlToText(focus);
+      linkHtmlToText(focus);
+      emojiHtmlToText(focus);
+    }
+    return is_mergeable;
   }
 
   var oldGetTextForContent = content_text.getTextForContent;

@@ -113,13 +113,13 @@
 
   var oldProjectIsMergeable = jQuery.fn.projectIsMergable;
   jQuery.fn.projectIsMergable = function(a) {
-      var is_mergeable = oldProjectIsMergeable.apply(this, arguments);
-      if (is_mergeable) {
-        var focus = this.getName().children(".content");
-        focus.removeClass("tex2jax_process").addClass("tex2jax_ignore");
-        mathjaxHtmlToText(focus);
-      }
-      return is_mergeable;
+    var is_mergeable = oldProjectIsMergeable.apply(this, arguments);
+    if (is_mergeable) {
+      var focus = this.getName().children(".content");
+      focus.removeClass("tex2jax_process").addClass("tex2jax_ignore");
+      mathjaxHtmlToText(focus);
+    }
+    return is_mergeable;
   }
 
   var oldGetTextForContent = content_text.getTextForContent;
