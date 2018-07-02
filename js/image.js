@@ -81,7 +81,7 @@
 
   var timerRendering;
   function startRenderingImage(){
-      console.log("START !");
+      console.log("START Rendering Image");
       if (timerRendering) {
         clearInterval(timerRendering);
       };
@@ -89,13 +89,13 @@
       timerRendering = setInterval(function(){
         focus = READ_ONLY_MAIN_TREE ? null : getCurrentlyFocusedContent();
         $(".selected .content").each(function(){
-          if(focus && (focus[0].isSameNode($(this)[0])) ) {
+          if(focus && (focus[0].isSameNode($(this)[0]))) {
             imageHtmlToText($(this));
             videoHtmlToText($(this));
             linkHtmlToText($(this));
             emojiHtmlToText($(this));
           }
-          else{
+          else if($("#pasteBucket").text() == ''){
             textToImageHtml($(this));
             textToVideoHtml($(this));
             textToLinkHtml($(this));
@@ -106,7 +106,7 @@
   }
 
   function stopRenderingImage(){
-    console.log("STOP !");
+    console.log("STOP Rendering Image");
     if (timerRendering) {
       clearInterval(timerRendering);
     };
@@ -122,7 +122,6 @@
 
 
   function initRenderingImage(){
-    console.log(window);
     var metaRender = $("[name=\'renderingImage\']");
     var isRendering;
     if(!metaRender.length){

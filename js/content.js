@@ -53,6 +53,7 @@ String.prototype.replaceAll = function(find, replace) {
         location.href = "/#/";
     }
     var addCSS = function() {
+      console.log("presenter mode");
       var path = chrome.extension.getURL('css/inject.css');
       $('head').append($('<link>')
           .attr("id","injectCSS")
@@ -69,6 +70,7 @@ String.prototype.replaceAll = function(find, replace) {
       document.addEventListener('keyup', shortcut, false);
     };
     var deleteCSS = function() {
+      console.log("normal mode");
       $('#injectCSS').remove();
       $('#goParent').remove();
       document.removeEventListener('keyup', shortcut, false);
@@ -147,11 +149,11 @@ String.prototype.replaceAll = function(find, replace) {
           .attr("href", path));
 
       var s = document.createElement('script');
-      s.src = chrome.extension.getURL("js/render.js");
+      s.src = chrome.extension.getURL("js/image.js");
       (document.head||document.documentElement).appendChild(s);
 
-      var s = document.createElement('script');
-      s.src = chrome.extension.getURL("js/image.js");
+      s = document.createElement('script');
+      s.src = chrome.extension.getURL("js/render.js");
       (document.head||document.documentElement).appendChild(s);
 
       s = document.createElement('script');

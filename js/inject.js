@@ -47,7 +47,7 @@ function initLockUnlock(){
   isLock = metaLock.attr("content");
   if(isLock == "true") READ_ONLY_MAIN_TREE = true;
   else  READ_ONLY_MAIN_TREE = false;
-  console.log(READ_ONLY_MAIN_TREE);
+  console.log("Lock contentent : " + READ_ONLY_MAIN_TREE);
 
   setInterval(function(){
     metaLock = $("[name=\'lock\']");
@@ -55,7 +55,7 @@ function initLockUnlock(){
       isLock = metaLock.attr("content");
       if(isLock == "true") READ_ONLY_MAIN_TREE = true;
       else  READ_ONLY_MAIN_TREE = false;
-      console.log(READ_ONLY_MAIN_TREE);
+      console.log("Lock contentent : " + READ_ONLY_MAIN_TREE);
     }
   }, 1000);
 }

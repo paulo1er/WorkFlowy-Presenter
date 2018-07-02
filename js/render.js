@@ -41,7 +41,7 @@
 
   var timerRendering;
   function startRendering(){
-      console.log("START !");
+      console.log("START Rendering LaTeX");
       if (timerRendering) {
         clearInterval(timerRendering);
       };
@@ -52,9 +52,9 @@
         $(".selected .content").each(function(){
           if(focus && (focus[0].isSameNode($(this)[0])) ) {
             focus.removeClass("tex2jax_process").addClass("tex2jax_ignore");
-            mathjaxHtmlToText(focus);
+            mathjaxHtmlToText($(this));
           }
-          else{
+          else if($("#pasteBucket").text() == ''){
             $(this).removeClass("tex2jax_ignore").addClass("tex2jax_process");
           }
         });
@@ -64,7 +64,7 @@
   }
 
   function stopRendering(){
-    console.log("STOP !");
+    console.log("STOP Rendering LaTeX");
     if (timerRendering) {
       clearInterval(timerRendering);
     };
