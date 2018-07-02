@@ -14,6 +14,20 @@
     return b.html();
   }
 
+  function videoHtmlToText(b) {
+    b.find("iframe.video").each(function() {
+      $(this).replaceWith('?['+$(this).attr("title")+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+$(this).attr("src")+'">'+$(this).attr("src")+'</a>)') ;
+    });
+    return b.html();
+  }
+
+  var RegexVideo = /\?\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
+  function textToVideoHtml(b) {
+    if(RegexVideo.test(b.html()))
+      b.html(b.html().replace(RegexVideo, "<iframe class='video' src='$2' title='$1' allowfullscreen></iframe>"));
+    return b.html();
+  }
+
   function linkHtmlToText(b) {
     b.find(".link").each(function() {
       $(this).replaceWith('['+$(this).text()+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+$(this).attr("href")+'">'+$(this).attr("href")+'</a>)') ;
@@ -77,11 +91,13 @@
         $(".selected .content").each(function(){
           if(focus && (focus[0].isSameNode($(this)[0])) ) {
             imageHtmlToText($(this));
+            videoHtmlToText($(this));
             linkHtmlToText($(this));
             emojiHtmlToText($(this));
           }
           else{
             textToImageHtml($(this));
+            textToVideoHtml($(this));
             textToLinkHtml($(this));
             textToEmojiHtml($(this));
           }
@@ -97,6 +113,7 @@
     timerRendering = setInterval(function(){
       $(".selected .content").each(function(){
         imageHtmlToText($(this));
+        videoHtmlToText($(this));
         linkHtmlToText($(this));
         emojiHtmlToText($(this));
       });
@@ -152,6 +169,7 @@
       if (is_mergeable) {
         var focus = this.getName().children(".content");
         imageHtmlToText(focus);
+        videoHtmlToText(focus);
         linkHtmlToText(focus);
         emojiHtmlToText(focus);
       }
@@ -161,6 +179,7 @@
   var oldGetTextForContent = content_text.getTextForContent;
   content_text.getTextForContent = function(e) {
     imageHtmlToText(e);
+    videoHtmlToText(e);
     linkHtmlToText(e);
     emojiHtmlToText(e);
     return oldGetTextForContent.apply(this, arguments);
