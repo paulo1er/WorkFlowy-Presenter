@@ -5,6 +5,7 @@ String.prototype.replaceAll = function(find, replace) {
 (function($){
     var isPresenter = false;
     var isLatexRender = false;
+    var isImageRender = false;
     var previewColours = true;
     var lockContent = false;
 
@@ -52,12 +53,14 @@ String.prototype.replaceAll = function(find, replace) {
         location.href = "/#/";
     }
     var addCSS = function() {
+      console.log("presenter mode");
       var path = chrome.extension.getURL('css/inject.css');
       $('head').append($('<link>')
           .attr("id","injectCSS")
           .attr("rel","stylesheet")
           .attr("type","text/css")
           .attr("href", path));
+
       $("#logo:not([class*='show'])").addClass("show");
       $("#searchForm:not([class*='show'])").addClass("show");
       $('#header').append($('<a>')
@@ -67,6 +70,7 @@ String.prototype.replaceAll = function(find, replace) {
       document.addEventListener('keyup', shortcut, false);
     };
     var deleteCSS = function() {
+      console.log("normal mode");
       $('#injectCSS').remove();
       $('#goParent').remove();
       document.removeEventListener('keyup', shortcut, false);
@@ -136,13 +140,26 @@ String.prototype.replaceAll = function(find, replace) {
     var startWorking = function() {
       document.addEventListener("DOMNodeInserted", startTimer);
 
+
+      var path = chrome.extension.getURL('css/emoji.css');
+      $('head').append($('<link>')
+          .attr("id","emojiCSS")
+          .attr("rel","stylesheet")
+          .attr("type","text/css")
+          .attr("href", path));
+
       var s = document.createElement('script');
+      s.src = chrome.extension.getURL("js/image.js");
+      (document.head||document.documentElement).appendChild(s);
+
+      s = document.createElement('script');
       s.src = chrome.extension.getURL("js/render.js");
       (document.head||document.documentElement).appendChild(s);
 
       s = document.createElement('script');
       s.src = chrome.extension.getURL("js/inject.js");
       (document.head||document.documentElement).appendChild(s);
+
 
       //addControllers();
 
@@ -154,6 +171,13 @@ String.prototype.replaceAll = function(find, replace) {
         $("head").append(metaRender);
       }
       metaRender.attr("content", isLatexRender);
+
+      var metaRenderImage = $("[name=\'renderingImage\']");
+      if(!metaRenderImage.length){
+        metaRenderImage = $("<meta>").attr("name", "renderingImage").attr("content", isImageRender);
+        $("head").append(metaRenderImage);
+      }
+      metaRenderImage.attr("content", isImageRender);
 
       var metaLock = $("[name=\'lock\']");
       if(!metaLock.length){
@@ -180,6 +204,10 @@ String.prototype.replaceAll = function(find, replace) {
           isLatexRender = changes.isLatexRender.newValue;
           metaRender.attr("content", isLatexRender);
         };
+        if ("isImageRender" in changes) {
+          isImageRender = changes.isImageRender.newValue;
+          metaRenderImage.attr("content", isImageRender);
+        };
         if ("lockContent" in changes) {
           lockContent = changes.lockContent.newValue;
           metaLock.attr("content", lockContent);
@@ -190,10 +218,11 @@ String.prototype.replaceAll = function(find, replace) {
       isPresenter = vals.presenter;
       previewColours = vals.previewColours;
       isLatexRender = vals.isLatexRender;
+      isImageRender = vals.isImageRender;
       lockContent = vals.lockContent;
       startWorking();
     };
-  chrome.storage.sync.get({"presenter":false, "previewColours":true, "isLatexRender":true, "lockContent":false}, callbackGetValue);
+  chrome.storage.sync.get({"presenter":false, "previewColours":true, "isLatexRender":true, "isImageRender":true, "lockContent":false}, callbackGetValue);
 
 	chrome.runtime.sendMessage({
 		type: 'showIcon'
