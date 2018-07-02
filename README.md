@@ -47,11 +47,12 @@ This option display LaTeX code.
 - in line $ Code $
 - in block \\[ Code \\]
 
- __WARNING : This option have a bug and can create some undesirable text in your WorkFlowy.__
+### Render Markdown
 
-The bug appear when you edit the WorkFlowy content and the LaTeX rendering is active.
-
-If the bug appear, Ctrl+z will delete the undesirable text.
+This option transform :
+- !\[Title](www.myImage.com) to an image
+- ?\[Title](www.myVideo.com) to a video
+- \[Name](www.myURL.com) to a link.
 
 ### Other
 
