@@ -1,9 +1,8 @@
 {
-"update_url": "https://clients2.google.com/service/update2/crx",
-
  "manifest_version": 2,
  "name": "WorkFlowy Presenter",
-  "version": "2.1",
+  "version": "1.0.0",
+  "version_name": "1.O rc",
   "description": "Presenter for workflowy.com.",
   "background": {
     "scripts":["js/background.js"]
@@ -28,6 +27,7 @@
   "web_accessible_resources":  [
     "css/*.css",
     "js/render.js",
-    "js/inject.js"
+    "js/inject.js",
+    "js/image.js"
   ]
 }
