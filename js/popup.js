@@ -1,8 +1,8 @@
 var option = {
   "presenter" : false,
-  "previewColours" : true,
+  "isStyleRender" : true,
   "isLatexRender" : true,
-  "isImageRender" : true,
+  "isMarkdownRender" : true,
   "lockContent" : false,
 }
 
@@ -46,7 +46,7 @@ function callbackGetValue(vals){
 }
 
 function warningOptionSelected(){
-  if(!(option["isLatexRender"]  || option["isImageRender"])  || option["lockContent"]) $("#needLock").hide();
+  if(!(option["isLatexRender"]  || option["isMarkdownRender"])  || option["lockContent"]) $("#needLock").hide();
   else $("#needLock").show();
 }
 

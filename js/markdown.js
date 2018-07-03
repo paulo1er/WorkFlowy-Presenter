@@ -1,44 +1,45 @@
 (function(){
 
   function imageHtmlToText(b) {
-    b.find("img").each(function() {
-      $(this).parent().replaceWith('!['+$(this).attr("alt")+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+$(this).attr("src")+'">'+$(this).attr("src")+'</a>)') ;
+    b.find("a.markdownImage").each(function() {
+      var img = $(this).children("img");
+      $(this).replaceWith('!['+img.attr("alt")+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+img.attr("src")+'">'+img.attr("src")+'</a>)') ;
     });
     return b.html();
   }
 
-  var RegexImage = /!\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
+  var regexImage = /!\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
   function textToImageHtml(b) {
-    if(RegexImage.test(b.html()))
-      b.html(b.html().replace(RegexImage, "<a href='$2' class='image' target='_blank'><img src='$2' alt='$1' style='display: block;max-width:"+b.width()+"px;width: auto;height: auto;'></a>"));
+    if(regexImage.test(b.html()))
+      b.html(b.html().replace(regexImage, "<a href='$2' class='markdownImage' target='_blank'><img src='$2' alt='$1' style='display: block;max-width:"+b.width()+"px;width: auto;height: auto;'></a>"));
     return b.html();
   }
 
   function videoHtmlToText(b) {
-    b.find("iframe.video").each(function() {
+    b.find("iframe.markdownVideo").each(function() {
       $(this).replaceWith('?['+$(this).attr("title")+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+$(this).attr("src")+'">'+$(this).attr("src")+'</a>)') ;
     });
     return b.html();
   }
 
-  var RegexVideo = /\?\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
+  var regexVideo = /\?\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
   function textToVideoHtml(b) {
-    if(RegexVideo.test(b.html()))
-      b.html(b.html().replace(RegexVideo, "<iframe class='video' src='$2' title='$1' allowfullscreen></iframe>"));
+    if(regexVideo.test(b.html()))
+      b.html(b.html().replace(regexVideo, "<iframe class='markdownVideo' src='$2' title='$1' allowfullscreen style='display:block;'></iframe>"));
     return b.html();
   }
 
   function linkHtmlToText(b) {
-    b.find(".link").each(function() {
+    b.find("a.markdownLink").each(function() {
       $(this).replaceWith('['+$(this).text()+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+$(this).attr("href")+'">'+$(this).attr("href")+'</a>)') ;
     });
     return b.html();
   }
 
-  var RegexLink = /\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
+  var regexLink = /\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
   function textToLinkHtml(b) {
-    if(RegexLink.test(b.html()))
-      b.html(b.html().replace(RegexLink, "<a href='$2' class='contentLink link' target='_blank'>$1</a>"));
+    if(regexLink.test(b.html()))
+      b.html(b.html().replace(regexLink, "<a href='$2' class='contentLink markdownLink' target='_blank'>$1</a>"));
     return b.html();
   }
 
@@ -50,25 +51,25 @@
     return b.html();
   }
 
-  var RegexEmoji = /:([-a-z_0-9]*):/g;
+  var regexEmoji = /:([-a-z_0-9]*):/g;
   function textToEmojiHtml(b) {
     var result = "";
     var text = b.html();
-    var match = RegexEmoji.exec(text);
+    var match = regexEmoji.exec(text);
     var i_prev = 0;
     while(match!=null){
       var i = match.index;
       if(i!=i_prev){
         result += text.slice(i_prev, i);
       }
-      i_prev= RegexEmoji.lastIndex;
+      i_prev= regexEmoji.lastIndex;
       if(allEmoji.includes(match[1])) {
         result += "<i class='em em-"+match[1]+"' data-text='"+match[1]+"'></i>"
       }
       else {
         result += ":"+match[1]+":"
       }
-      match = RegexEmoji.exec(text);
+      match = regexEmoji.exec(text);
     }
     if(text.length!=i_prev){
       result += text.slice(i_prev, text.length);
@@ -80,8 +81,8 @@
   }
 
   var timerRendering;
-  function startRenderingImage(){
-      console.log("START Rendering Image");
+  function startRenderingMarkdown(){
+      console.log("START Rendering Markdown");
       if (timerRendering) {
         clearInterval(timerRendering);
       };
@@ -105,8 +106,8 @@
       }, 100);
   }
 
-  function stopRenderingImage(){
-    console.log("STOP Rendering Image");
+  function stopRenderingMarkdown(){
+    console.log("STOP Rendering Markdown");
     if (timerRendering) {
       clearInterval(timerRendering);
     };
@@ -121,11 +122,11 @@
   }
 
 
-  function initRenderingImage(){
-    var metaRender = $("[name=\'renderingImage\']");
+  function initRenderingMarkdown(){
+    var metaRender = $("[name=\'renderingMarkdown\']");
     var isRendering;
     if(!metaRender.length){
-      metaRender = $("<meta>").attr("name", "renderingImage").attr("content", "false");
+      metaRender = $("<meta>").attr("name", "renderingMarkdown").attr("content", "false");
       $("head").append(metaRender);
     }
     isRendering = metaRender.attr("content");
@@ -145,21 +146,21 @@
       }
     })();
 
-    if(isRendering == "true") startRenderingImage();
-    else stopRenderingImage();
+    if(isRendering == "true") startRenderingMarkdown();
+    else stopRenderingMarkdown();
 
     setInterval(function(){
-      metaRender = $("[name=\'renderingImage\']");
+      metaRender = $("[name=\'renderingMarkdown\']");
       if(isRendering != metaRender.attr("content")){
         isRendering = metaRender.attr("content");
-        if(isRendering == "true") startRenderingImage();
-        else stopRenderingImage();
+        if(isRendering == "true") startRenderingMarkdown();
+        else stopRenderingMarkdown();
       }
     }, 1000);
   }
 
   $(window).load(function() {
-    initRenderingImage();
+    initRenderingMarkdown();
   });
 
   var oldProjectIsMergeable2 = jQuery.fn.projectIsMergable;

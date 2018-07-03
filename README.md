@@ -19,7 +19,7 @@ Change the CSS of workflowy.com for only keep the useful information.
 
 By activate this option you can't modify the content of workflowy.
 
-### Preview styles
+### Render styles
 
 This option is used to apply some style to only one item by tag.
 

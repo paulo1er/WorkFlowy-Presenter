@@ -5,8 +5,8 @@ String.prototype.replaceAll = function(find, replace) {
 (function($){
     var isPresenter = false;
     var isLatexRender = false;
-    var isImageRender = false;
-    var previewColours = true;
+    var isMarkdownRender = false;
+    var isStyleRender = true;
     var lockContent = false;
 
     var prev_isPresenter = isPresenter;
@@ -23,7 +23,7 @@ String.prototype.replaceAll = function(find, replace) {
         }
         styles["line-height"] = "1.3em";
 
-        if(!previewColours) node.removeAttr('style');
+        if(!isStyleRender) node.removeAttr('style');
         else{
           node.children(".contentTag").children(".contentTagText").each(function() {
             var tagText = $(this).text();
@@ -53,7 +53,7 @@ String.prototype.replaceAll = function(find, replace) {
         location.href = "/#/";
     }
     var addCSS = function() {
-      console.log("presenter mode");
+      console.log("Presenter mode");
       var path = chrome.extension.getURL('css/inject.css');
       $('head').append($('<link>')
           .attr("id","injectCSS")
@@ -70,7 +70,7 @@ String.prototype.replaceAll = function(find, replace) {
       document.addEventListener('keyup', shortcut, false);
     };
     var deleteCSS = function() {
-      console.log("normal mode");
+      console.log("Normal mode");
       $('#injectCSS').remove();
       $('#goParent').remove();
       document.removeEventListener('keyup', shortcut, false);
@@ -138,6 +138,7 @@ String.prototype.replaceAll = function(find, replace) {
     };
 
     var startWorking = function() {
+      console.log(isStyleRender ? "START Rendering Style" : "STOP Rendering Style");
       document.addEventListener("DOMNodeInserted", startTimer);
 
 
@@ -149,11 +150,11 @@ String.prototype.replaceAll = function(find, replace) {
           .attr("href", path));
 
       var s = document.createElement('script');
-      s.src = chrome.extension.getURL("js/image.js");
+      s.src = chrome.extension.getURL("js/markdown.js");
       (document.head||document.documentElement).appendChild(s);
 
       s = document.createElement('script');
-      s.src = chrome.extension.getURL("js/render.js");
+      s.src = chrome.extension.getURL("js/latex.js");
       (document.head||document.documentElement).appendChild(s);
 
       s = document.createElement('script');
@@ -165,19 +166,19 @@ String.prototype.replaceAll = function(find, replace) {
 
       if(isPresenter) addCSS(); else deleteCSS();
 
-      var metaRender = $("[name=\'rendering\']");
-      if(!metaRender.length){
-        metaRender = $("<meta>").attr("name", "rendering").attr("content", isLatexRender);
-        $("head").append(metaRender);
+      var metaRenderLaTeX = $("[name=\'renderingLaTeX\']");
+      if(!metaRenderLaTeX.length){
+        metaRenderLaTeX = $("<meta>").attr("name", "renderingLaTeX").attr("content", isLatexRender);
+        $("head").append(metaRenderLaTeX);
       }
-      metaRender.attr("content", isLatexRender);
+      metaRenderLaTeX.attr("content", isLatexRender);
 
-      var metaRenderImage = $("[name=\'renderingImage\']");
-      if(!metaRenderImage.length){
-        metaRenderImage = $("<meta>").attr("name", "renderingImage").attr("content", isImageRender);
-        $("head").append(metaRenderImage);
+      var metaRenderMarkdown = $("[name=\'renderingMarkdown\']");
+      if(!metaRenderMarkdown.length){
+        metaRenderMarkdown = $("<meta>").attr("name", "renderingMarkdown").attr("content", isMarkdownRender);
+        $("head").append(metaRenderMarkdown);
       }
-      metaRenderImage.attr("content", isImageRender);
+      metaRenderMarkdown.attr("content", isMarkdownRender);
 
       var metaLock = $("[name=\'lock\']");
       if(!metaLock.length){
@@ -196,17 +197,18 @@ String.prototype.replaceAll = function(find, replace) {
           }
           startTimer();
         };
-        if ("previewColours" in changes) {
-          previewColours = changes.previewColours.newValue;
+        if ("isStyleRender" in changes) {
+          isStyleRender = changes.isStyleRender.newValue;
+          console.log(isStyleRender ? "START Rendering Style" : "STOP Rendering Style");
           startTimer();
         };
         if ("isLatexRender" in changes) {
           isLatexRender = changes.isLatexRender.newValue;
-          metaRender.attr("content", isLatexRender);
+          metaRenderLaTeX.attr("content", isLatexRender);
         };
-        if ("isImageRender" in changes) {
-          isImageRender = changes.isImageRender.newValue;
-          metaRenderImage.attr("content", isImageRender);
+        if ("isMarkdownRender" in changes) {
+          isMarkdownRender = changes.isMarkdownRender.newValue;
+          metaRenderMarkdown.attr("content", isMarkdownRender);
         };
         if ("lockContent" in changes) {
           lockContent = changes.lockContent.newValue;
@@ -216,13 +218,13 @@ String.prototype.replaceAll = function(find, replace) {
     };
     var callbackGetValue = function(vals) {
       isPresenter = vals.presenter;
-      previewColours = vals.previewColours;
+      isStyleRender = vals.isStyleRender;
       isLatexRender = vals.isLatexRender;
-      isImageRender = vals.isImageRender;
+      isMarkdownRender = vals.isMarkdownRender;
       lockContent = vals.lockContent;
       startWorking();
     };
-  chrome.storage.sync.get({"presenter":false, "previewColours":true, "isLatexRender":true, "isImageRender":true, "lockContent":false}, callbackGetValue);
+  chrome.storage.sync.get({"presenter":false, "isStyleRender":true, "isLatexRender":true, "isMarkdownRender":true, "lockContent":false}, callbackGetValue);
 
 	chrome.runtime.sendMessage({
 		type: 'showIcon'

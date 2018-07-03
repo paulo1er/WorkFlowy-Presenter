@@ -40,7 +40,7 @@
 
 
   var timerRendering;
-  function startRendering(){
+  function startRenderingLaTeX(){
       console.log("START Rendering LaTeX");
       if (timerRendering) {
         clearInterval(timerRendering);
@@ -63,7 +63,7 @@
       }, 100);
   }
 
-  function stopRendering(){
+  function stopRenderingLaTeX(){
     console.log("STOP Rendering LaTeX");
     if (timerRendering) {
       clearInterval(timerRendering);
@@ -85,30 +85,30 @@
     }, 1000);
   }
 
-  function initRendering(){
-    var metaRender = $("[name=\'rendering\']");
+  function initRenderingLaTeX(){
+    var metaRender = $("[name=\'renderingLaTeX\']");
     var isRendering;
     if(!metaRender.length){
-      metaRender = $("<meta>").attr("name", "rendering").attr("content", "false");
+      metaRender = $("<meta>").attr("name", "renderingLaTeX").attr("content", "false");
       $("head").append(metaRender);
     }
     isRendering = metaRender.attr("content");
     ignoreParent();
-    if(isRendering == "true")startRendering();
-    else stopRendering();
+    if(isRendering == "true")startRenderingLaTeX();
+    else stopRenderingLaTeX();
 
     setInterval(function(){
-      metaRender = $("[name=\'rendering\']");
+      metaRender = $("[name=\'renderingLaTeX\']");
       if(isRendering != metaRender.attr("content")){
         isRendering = metaRender.attr("content");
-        if(isRendering == "true") startRendering();
-        else stopRendering();
+        if(isRendering == "true") startRenderingLaTeX();
+        else stopRenderingLaTeX();
       }
     }, 1000);
   }
 
   $(window).load(function() {
-    initRendering();
+    initRenderingLaTeX();
   });
 
   var oldProjectIsMergeable = jQuery.fn.projectIsMergable;
