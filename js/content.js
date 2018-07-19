@@ -77,52 +77,28 @@ String.prototype.replaceAll = function(find, replace) {
     };
 
     function addControllers(){
-      $('#controlsLeft').append("<hr>")
-      var inputFontColor = $("<input>").attr("type","color").val("#000000").hide();
-      inputFontColor.on("change",function() {
-        var content = $(this).parent().parent().parent().children(".content");
-        content.children(".contentTag").children(".contentTagText").each(function() {
-          var cf = /^wfe-font-color:(?:([a-z]*)|rgb:([0-9a-f]*))$/i.exec($(this).text());
-          if(cf != null) {
-            $(this).parent().remove();
-          }
-        });
-        content.focus();
-        var tagToAdd = "#wfe-font-color:rgb:" + $(this).val().slice(1);
-        if(content.text()[content.text().length - 1] != " ") tagToAdd = " " + tagToAdd;
-        content.html(content.html() + tagToAdd);
-        $(this).val("#000000");
-        content.blur();
+      var path = chrome.extension.getURL('css/modal.css');
+      $('head').append($('<link>')
+          .attr("id","modalCSS")
+          .attr("rel","stylesheet")
+          .attr("type","text/css")
+          .attr("href", path));
+      path = chrome.extension.getURL('modal.html');
+      $.ajax({
+        url: path,
+        success: function (data) {
+          $('#documentView').append(data);
+          modal();
+        },
+        dataType: 'html'
       });
-      var aFontColor =  $("<a>").text("Font color");
-      aFontColor.click(function(){
-        inputFontColor.click();
-      })
-      $('#controlsLeft').append(inputFontColor);
-      $('#controlsLeft').append(aFontColor);
 
-      var inputBackground = $("<input>").attr("type","color").val("#FFFFFF").hide();
-      inputBackground.on("change",function() {
-        var content = $(this).parent().parent().parent().children(".content");
-        content.children(".contentTag").children(".contentTagText").each(function() {
-          var cf = /^wfe-background:(?:([a-z]*)|rgb:([0-9a-f]*))$/i.exec($(this).text());
-          if(cf != null) {
-            $(this).parent().remove();
-          }
-        });
-        content.focus();
-        var tagToAdd = "#wfe-background:rgb:" + $(this).val().slice(1);
-        if(content.text()[content.text().length - 1] != " ") tagToAdd = " " + tagToAdd;
-        content.html(content.html() + tagToAdd);
-        $(this).val("#FFFFFF");
-        content.blur();
-      });
-      var aBackground =  $("<a>").text("Background");
-      aBackground.click(function(){
-        inputBackground.click();
-      })
-      $('#controlsLeft').append(inputBackground);
-      $('#controlsLeft').append(aBackground);
+
+      window.onclick = function(event) {
+        if (event.target == modal[0]) {
+          modal.css("display", "none");
+        }
+      }
     }
 
     function shortcut(e) {
@@ -162,7 +138,7 @@ String.prototype.replaceAll = function(find, replace) {
       (document.head||document.documentElement).appendChild(s);
 
 
-      //addControllers();
+      addControllers();
 
       if(isPresenter) addCSS(); else deleteCSS();
 
@@ -238,6 +214,13 @@ class Color{
 		this.Blue = args[2];
 	}
 	toString(){return "rgb("+this.Red+", "+this.Green+", "+this.Blue+")"}
+  toHexa(){
+    function componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    }
+    return "#" + componentToHex(this.Red) + componentToHex(this.Green ) + componentToHex(this.Blue);
+  }
 };
 
 function hexaToColor(hexa){
