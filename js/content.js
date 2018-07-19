@@ -138,7 +138,7 @@ String.prototype.replaceAll = function(find, replace) {
       (document.head||document.documentElement).appendChild(s);
 
 
-      addControllers();
+      //addControllers();
 
       if(isPresenter) addCSS(); else deleteCSS();
 
