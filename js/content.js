@@ -15,6 +15,7 @@ window.addEventListener("keydown", function(e) {
     var isMarkdownRender = false;
     var isStyleRender = true;
     var lockContent = false;
+    var style = "style1";
 
     var prev_isPresenter = isPresenter;
     var timerUpdateNodes;
@@ -68,6 +69,14 @@ window.addEventListener("keydown", function(e) {
           .attr("type","text/css")
           .attr("href", path));
 
+      path = chrome.extension.getURL('css/style/'+style+'.css');
+      $('head').append($('<link>')
+          .attr("id","styleCSS")
+          .attr("rel","stylesheet")
+          .attr("type","text/css")
+          .attr("href", path));
+
+
       $("#logo:not([class*='show'])").addClass("show");
       $("#searchForm:not([class*='show'])").addClass("show");
       $('#header').append($('<a>')
@@ -79,6 +88,7 @@ window.addEventListener("keydown", function(e) {
     var deleteCSS = function() {
       console.log("Normal mode");
       $('#injectCSS').remove();
+      $('#styleCSS').remove();
       $('#goParent').remove();
       document.removeEventListener('keyup', shortcut, false);
     };
@@ -197,6 +207,10 @@ window.addEventListener("keydown", function(e) {
           lockContent = changes.lockContent.newValue;
           metaLock.attr("content", lockContent);
         };
+        if ("style" in changes) {
+          style = changes.style.newValue;
+          $("#styleCSS").attr("href", chrome.extension.getURL('css/style/'+style+'.css'));
+        };
        });
     };
     var callbackGetValue = function(vals) {
@@ -205,9 +219,10 @@ window.addEventListener("keydown", function(e) {
       isLatexRender = vals.isLatexRender;
       isMarkdownRender = vals.isMarkdownRender;
       lockContent = vals.lockContent;
+      style = vals.style;
       startWorking();
     };
-  chrome.storage.sync.get({"presenter":false, "isStyleRender":true, "isLatexRender":true, "isMarkdownRender":true, "lockContent":false}, callbackGetValue);
+  chrome.storage.sync.get({"presenter":false, "isStyleRender":true, "isLatexRender":true, "isMarkdownRender":true, "lockContent":false, "style":"style1"}, callbackGetValue);
 
 	chrome.runtime.sendMessage({
 		type: 'showIcon'

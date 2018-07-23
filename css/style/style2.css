@@ -1,0 +1,16 @@
+.selected.project > .name {
+  padding: 6px 60px;
+  text-align: center;
+  margin: 0px 0px 10px 0px;
+  border-bottom: 2px solid #83992A;
+  color: #3A4900;
+}
+
+.page > .project {
+  border: 2px solid #83992A;
+  padding: 0px 48px;
+}
+
+.highlighted::before{
+  background-color:#D5E88B;
+}
