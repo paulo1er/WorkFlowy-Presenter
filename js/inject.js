@@ -29,12 +29,19 @@ function checkURLchange(){
 }
 
 $(window).load(function() {
-  setInterval(function(){
-    checkURLchange();
-  }, 1000);
+  waitLoad(function(){
+    setInterval(checkURLchange, 1000);
+  });
   initLockUnlock();
 });
 
+function waitLoad(callback){
+  if($('.selected').length) callback();
+  else
+    setInterval(function(){
+      waitLoad(callback);
+    }, 1000);
+}
 
 
 function initLockUnlock(){

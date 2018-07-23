@@ -2,6 +2,13 @@ String.prototype.replaceAll = function(find, replace) {
     return this.split(find).join(replace);
 };
 
+window.addEventListener("keydown", function(e) {
+  if((e.keyCode == '33') || (e.keyCode == '34')){
+    e.preventDefault();
+    console.log(e.keyCode);
+  }
+}, false);
+
 (function($){
     var isPresenter = false;
     var isLatexRender = false;
