@@ -1,0 +1,22 @@
+.selected.project > .name {
+  padding: 6px 0px;
+  text-align: left;
+  margin: 0px 0px 10px -20px;
+}
+
+.name{
+  color: white;
+}
+
+.page {
+    background: radial-gradient(circle, #3E7A6F, #103B49);
+    border-color: #032631;
+}
+body{
+    background-color: #032631;
+}
+
+.highlighted::before{
+  background-color:#3E7A6F;
+  opacity:0.5;
+}

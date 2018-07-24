@@ -5,7 +5,6 @@ String.prototype.replaceAll = function(find, replace) {
 window.addEventListener("keydown", function(e) {
   if((e.keyCode == '33') || (e.keyCode == '34')){
     e.preventDefault();
-    console.log(e.keyCode);
   }
 }, false);
 
