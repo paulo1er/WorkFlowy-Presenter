@@ -33,6 +33,7 @@ $(window).load(function() {
     setInterval(checkURLchange, 1000);
   });
   initLockUnlock();
+  initPresenterMode();
 });
 
 function waitLoad(callback){
@@ -63,6 +64,28 @@ function initLockUnlock(){
       if(isLock == "true") READ_ONLY_MAIN_TREE = true;
       else  READ_ONLY_MAIN_TREE = false;
       console.log("Lock contentent : " + READ_ONLY_MAIN_TREE);
+    }
+  }, 1000);
+}
+
+
+function initPresenterMode(){
+  var isPresenter = $("#injectCSS").length;
+
+  var oldcreateMoveEventDataFromMouseOrTouchMoveEvent = window.scrolling.createMoveEventDataFromMouseOrTouchMoveEvent;
+  window.scrolling.createMoveEventDataFromMouseOrTouchMoveEvent = function() {
+    var r = oldcreateMoveEventDataFromMouseOrTouchMoveEvent.apply(this, arguments);
+    r._clientX=r._clientX/(1+isPresenter);
+    r._clientY=r._clientY/(1+isPresenter);
+    return r;
+  }
+
+  console.log("Presenter Mode : " + isPresenter);
+
+  setInterval(function(){
+    if(isPresenter != $("#injectCSS").length){
+      isPresenter = $("#injectCSS").length;
+      console.log("Presenter Mode : " + isPresenter);
     }
   }, 1000);
 }
