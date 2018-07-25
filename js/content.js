@@ -59,6 +59,11 @@ window.addEventListener("keydown", function(e) {
       else
         location.href = "/#/";
     }
+    function goFirstChild() {
+      var firstChildPath = $(".selected").children(".children").children(".project").first().children(".name").children(".bullet").attr("href");
+      if(firstChildPath)
+        location.href = firstChildPath;
+    }
     var addCSS = function() {
       console.log("Presenter mode");
       var path = chrome.extension.getURL('css/inject.css');
@@ -82,14 +87,12 @@ window.addEventListener("keydown", function(e) {
         .attr("id","goParent")
         .click(goParent)
         .text("<"));
-      document.addEventListener('keyup', shortcut, false);
     };
     var deleteCSS = function() {
       console.log("Normal mode");
       $('#injectCSS').remove();
       $('#styleCSS').remove();
       $('#goParent').remove();
-      document.removeEventListener('keyup', shortcut, false);
     };
 
     function addControllers(){
@@ -127,6 +130,23 @@ window.addEventListener("keydown", function(e) {
           var path = $('meta[name=urlNext]').attr("content");
           if(path && path!= "") location.href = path;
         }
+        else if (e.ctrlKey && e.keyCode == '39') {
+          goFirstChild();
+        }
+        else if (e.ctrlKey && e.keyCode == '37') {
+          goParent();
+        }
+        else if (e.keyCode == '115' && !isPresenter) {
+          isPresenter=true;
+          addCSS();
+          chrome.storage.sync.set({"presenter" : isPresenter});
+
+        }
+        else if (e.keyCode == '27' && isPresenter) {
+          isPresenter=false;
+          deleteCSS();
+          chrome.storage.sync.set({"presenter" : isPresenter});
+        }
     };
 
     var startWorking = function() {
@@ -155,6 +175,8 @@ window.addEventListener("keydown", function(e) {
 
 
       //addControllers();
+
+      document.addEventListener('keyup', shortcut, false);
 
       if(isPresenter) addCSS(); else deleteCSS();
 
