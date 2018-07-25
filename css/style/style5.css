@@ -8,6 +8,12 @@
   color: white;
 }
 
+@media print {
+  .name{
+    color: black;
+  }
+}
+
 .page {
     background: radial-gradient(circle, #3E7A6F, #103B49);
     border-color: #032631;

@@ -22,8 +22,20 @@
     margin: -20px -20px;
     border-color: transparent transparent #212121 transparent;
 }
+
+@media print {
+  .selected.project > .name::after {
+    border-color: transparent;
+  }
+}
 .name{
   color: white;
+}
+
+@media print {
+  .name{
+    color: black;
+  }
 }
 
 .page {

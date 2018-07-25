@@ -73,3 +73,22 @@
     background-color: #ddd;
     color: black;
 }
+
+
+
+@media print {
+  @page {
+    margin: 0;
+  }
+  body * {
+    visibility: hidden;
+  }
+  .page, .page * {
+    visibility: visible;
+  }
+
+  .page{
+    zoom:1;
+    padding:10px !important;
+  }
+}
