@@ -25,6 +25,14 @@ var shortcuts = {
   "goPreviusSibling" : [ new key("ArrowUp", 38, true, false, false) , new key("PageUp", 33, false, false, false) ],
   "goNextSibling" : [ new key("ArrowDown", 40, true, false, false) , new key("PageDown", 34, false, false, false) ],
   "goFirstChild" : [ new key("ArrowRight", 39, true, false, false) , null ],
+  "lockInPresenter" : [ null, null],
+  "renderStyles" : [ null, null],
+  "renderLaTeX" : [ null, null],
+  "renderMarkdown" : [ null, null],
+  "unlockInPresenter" : [ null, null],
+  "leaveStyles" : [ null, null],
+  "leaveLaTeX" : [ null, null],
+  "leaveMarkdown" : [ null, null],
 }
 
 function onClick(){

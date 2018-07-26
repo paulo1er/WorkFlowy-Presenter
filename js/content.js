@@ -35,6 +35,14 @@ window.addEventListener("keydown", function(e) {
       "goPreviusSibling" : [ new key("ArrowUp", 38, true, false, false) , new key("PageUp", 33, false, false, false) ],
       "goNextSibling" : [ new key("ArrowDown", 40, true, false, false) , new key("PageDown", 34, false, false, false) ],
       "goFirstChild" : [ new key("ArrowRight", 39, true, false, false) , null ],
+      "lockInPresenter" : [ null, null],
+      "renderStyles" : [ null, null],
+      "renderLaTeX" : [ null, null],
+      "renderMarkdown" : [ null, null],
+      "unlockInPresenter" : [ null, null],
+      "leaveStyles" : [ null, null],
+      "leaveLaTeX" : [ null, null],
+      "leaveMarkdown" : [ null, null],
     }
 
     var prev_isPresenter = isPresenter;
@@ -157,25 +165,56 @@ window.addEventListener("keydown", function(e) {
         if (eventEqualKey(e, shortcuts["goPreviusSibling"][0]) || eventEqualKey(e, shortcuts["goPreviusSibling"][1])) {
           goPreviusSibling();
         }
-        else if (eventEqualKey(e, shortcuts["goNextSibling"][0]) || eventEqualKey(e, shortcuts["goNextSibling"][1])) {
+        if (eventEqualKey(e, shortcuts["goNextSibling"][0]) || eventEqualKey(e, shortcuts["goNextSibling"][1])) {
           goNextSibling();
         }
-        else if (eventEqualKey(e, shortcuts["goFirstChild"][0]) || eventEqualKey(e, shortcuts["goFirstChild"][1])) {
+        if (eventEqualKey(e, shortcuts["goFirstChild"][0]) || eventEqualKey(e, shortcuts["goFirstChild"][1])) {
           goFirstChild();
         }
-        else if (eventEqualKey(e, shortcuts["goParent"][0]) || eventEqualKey(e, shortcuts["goParent"][1])) {
+        if (eventEqualKey(e, shortcuts["goParent"][0]) || eventEqualKey(e, shortcuts["goParent"][1])) {
           goParent();
         }
-        else if (eventEqualKey(e, shortcuts["beginPresenter"][0]) || eventEqualKey(e, shortcuts["beginPresenter"][1])) {
+        if (eventEqualKey(e, shortcuts["beginPresenter"][0]) || eventEqualKey(e, shortcuts["beginPresenter"][1])) {
           isPresenter=true;
           addCSS();
           chrome.storage.sync.set({"presenter" : isPresenter});
-
         }
-        else if (eventEqualKey(e, shortcuts["stopPresenter"][0]) || eventEqualKey(e, shortcuts["stopPresenter"][1])) {
+        if (eventEqualKey(e, shortcuts["stopPresenter"][0]) || eventEqualKey(e, shortcuts["stopPresenter"][1])) {
           isPresenter=false;
           deleteCSS();
           chrome.storage.sync.set({"presenter" : isPresenter});
+        }
+        if (eventEqualKey(e, shortcuts["lockInPresenter"][0]) || eventEqualKey(e, shortcuts["lockInPresenter"][1])) {
+          lockContent=true;
+          chrome.storage.sync.set({"lockContent" : lockContent});
+        }
+        if (eventEqualKey(e, shortcuts["renderStyles"][0]) || eventEqualKey(e, shortcuts["renderStyles"][1])) {
+          isStyleRender=true;
+          chrome.storage.sync.set({"isStyleRender" : isStyleRender});
+        }
+        if (eventEqualKey(e, shortcuts["renderLaTeX"][0]) || eventEqualKey(e, shortcuts["renderLaTeX"][1])) {
+          isLatexRender=true;
+          chrome.storage.sync.set({"isLatexRender" : isLatexRender});
+        }
+        if (eventEqualKey(e, shortcuts["renderMarkdown"][0]) || eventEqualKey(e, shortcuts["renderMarkdown"][1])) {
+          isMarkdownRender=true;
+          chrome.storage.sync.set({"isMarkdownRender" : isMarkdownRender});
+        }
+        if (eventEqualKey(e, shortcuts["unlockInPresenter"][0]) || eventEqualKey(e, shortcuts["unlockInPresenter"][1])) {
+          lockContent=false;
+          chrome.storage.sync.set({"lockContent" : lockContent});
+        }
+        if (eventEqualKey(e, shortcuts["leaveStyles"][0]) || eventEqualKey(e, shortcuts["leaveStyles"][1])) {
+          isStyleRender=false;
+          chrome.storage.sync.set({"isStyleRender" : isStyleRender});
+        }
+        if (eventEqualKey(e, shortcuts["leaveLaTeX"][0]) || eventEqualKey(e, shortcuts["leaveLaTeX"][1])) {
+          isLatexRender=false;
+          chrome.storage.sync.set({"isLatexRender" : isLatexRender});
+        }
+        if (eventEqualKey(e, shortcuts["leaveMarkdown"][0]) || eventEqualKey(e, shortcuts["leaveMarkdown"][1])) {
+          isMarkdownRender=false;
+          chrome.storage.sync.set({"isMarkdownRender" : isMarkdownRender});
         }
     };
 
