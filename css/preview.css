@@ -33,13 +33,17 @@
     background-image: url(https://workflowy.com/media/i/bullet.svg);
     height: 18px;
     width: 18px;
-    background-color: #e0e0e0;
     border-radius: 12px;
 
     position: absolute;
     left: -20px;
     margin-left: 1px;
 }
+
+.bullet:hover{
+  background-color: #e0e0e0;
+}
+
 .children {
     position: relative;
     margin-left: 40px;

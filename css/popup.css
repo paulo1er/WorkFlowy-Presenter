@@ -1,0 +1,61 @@
+
+input[type=checkbox] {
+	visibility: hidden;
+}
+
+.slide {
+	width: 80px;
+	height: 26px;
+	background: #555;
+	margin: auto;
+
+	-webkit-border-radius: 50px;
+	position: relative;
+
+	-webkit-box-shadow: inset 0px 1px 1px rgba(0,0,0,0.5), 0px 1px 0px rgba(255,255,255,0.2);
+}
+
+.slide:after {
+	content: 'OFF';
+	font: 12px/26px Arial, sans-serif;
+	color: #300;
+	position: absolute;
+	right: 10px;
+	z-index: 0;
+	font-weight: bold;
+	text-shadow: 1px 1px 0px rgba(255,255,255,.15);
+}
+
+.slide:before {
+	content: 'ON';
+	font: 12px/26px Arial, sans-serif;
+	color: #00bf00;
+	position: absolute;
+	left: 10px;
+	z-index: 0;
+	font-weight: bold;
+}
+
+.slide label {
+	display: block;
+	width: 34px;
+	height: 20px;
+
+	-webkit-border-radius: 50px;
+
+	-webkit-transition: all .4s ease;
+	cursor: pointer;
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	z-index: 1;
+
+	-webkit-box-shadow: 0px 2px 5px 0px rgba(0,0,0,0.3);
+	background: #fcfff4;
+
+	background: -webkit-linear-gradient(top, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+}
+
+.slide input[type=checkbox]:checked + label {
+	left: 43px;
+}
