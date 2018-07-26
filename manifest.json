@@ -23,7 +23,7 @@
     "default_popup": "popup.html"
   },
   "permissions": ["tabs", "storage"],
-  "options_page": "popup.html",
+  "options_page": "options.html",
   "web_accessible_resources":  [
     "css/*.css",
     "modal.html",

@@ -14,6 +14,13 @@
   display: none;
 }
 
+#bottomLinks{
+  display: none;
+}
+.proPitch{
+  display: none;
+}
+
 #pageContainer{
   margin-top:5px;
 }

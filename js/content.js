@@ -20,7 +20,7 @@ window.addEventListener("keydown", function(e) {
     var timerUpdateNodes;
     var updateNodes = function() {
       $(".selected .content").each(function() {
-        $(this).attr('contentEditable', !lockContent);
+        $(this).attr('contentEditable', !(lockContent && isPresenter));
         var node = $(this);
         var styles = {};
         for (var p in properties) {
@@ -53,16 +53,27 @@ window.addEventListener("keydown", function(e) {
       timerUpdateNodes = setInterval(updateNodes, 300);
     };
     function goParent() {
-      var parentPath = $(".selected").parent().parent().children(".name").children(".bullet").attr("href");
-      if(parentPath)
-        location.href = parentPath;
+      var path = $(".selected").parent().parent().children(".name").children(".bullet").attr("href");
+      if(path)
+        location.href = path;
       else
         location.href = "/#/";
+      $('html, body').animate({ scrollTop: 0 }, 'fast');
     }
     function goFirstChild() {
-      var firstChildPath = $(".selected").children(".children").children(".project").first().children(".name").children(".bullet").attr("href");
-      if(firstChildPath)
-        location.href = firstChildPath;
+      var path = $(".selected").children(".children").children(".project").first().children(".name").children(".bullet").attr("href");
+      if(path) location.href = path;
+      $('html, body').animate({ scrollTop: 0 }, 'fast');
+    }
+    function goNextSibling(){
+      var path = $('meta[name=urlNext]').attr("content");
+      if(path && path!= "") location.href = path;
+      $('html, body').animate({ scrollTop: 0 }, 'fast');
+    }
+    function goPreviusSibling(){
+      var path = $('meta[name=urlPrevious]').attr("content");
+      if(path && path!= "") location.href = path;
+      $('html, body').animate({ scrollTop: 0 }, 'fast');
     }
     var addCSS = function() {
       console.log("Presenter mode");
@@ -123,12 +134,10 @@ window.addEventListener("keydown", function(e) {
     function shortcut(e) {
         e = e || window.event;
         if ((e.ctrlKey && e.keyCode == '38') || (e.keyCode == '33')) {
-          var path = $('meta[name=urlPrevious]').attr("content");
-          if(path && path!= "") location.href = path;
+          goPreviusSibling();
         }
         else if ((e.ctrlKey && e.keyCode == '40') || (e.keyCode == '34')) {
-          var path = $('meta[name=urlNext]').attr("content");
-          if(path && path!= "") location.href = path;
+          goNextSibling();
         }
         else if (e.ctrlKey && e.keyCode == '39') {
           goFirstChild();

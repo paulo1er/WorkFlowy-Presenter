@@ -1,5 +1,9 @@
 var option = {
-  "presenter" : false
+  "isStyleRender" : true,
+  "isLatexRender" : true,
+  "isMarkdownRender" : true,
+  "lockContent" : false,
+  "style" : "style1"
 }
 
 function onClick(){
@@ -30,6 +34,13 @@ function initValues(){
       }
     }
   });
+
+  path = chrome.extension.getURL('css/style/'+option["style"]+'.css');
+  $('head').append($('<link>')
+    .attr("id","styleCSS")
+    .attr("rel","stylesheet")
+    .attr("type","text/css")
+    .attr("href", path));
 }
 
 function callbackGetValue(vals){
@@ -44,6 +55,10 @@ function callbackGetValue(vals){
 }
 
 function warningOptionSelected(){
+  if(!(option["isLatexRender"]  || option["isMarkdownRender"])  || option["lockContent"]) $("#needLock").hide();
+  else $("#needLock").show();
+
+  $("#styleCSS").attr("href", chrome.extension.getURL('css/style/'+option["style"]+'.css'));
 }
 
 $(document).ready(function(){
