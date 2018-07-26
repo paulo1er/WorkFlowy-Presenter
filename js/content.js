@@ -9,12 +9,33 @@ window.addEventListener("keydown", function(e) {
 }, false);
 
 (function($){
+    var key = function(keyName, keyCode, ctrlKey, shiftKey, altKey){
+      this.keyName= keyName;
+      this.keyCode = keyCode;
+      this.ctrlKey = ctrlKey;
+      this.shiftKey = shiftKey;
+      this.altKey = altKey;
+    }
+
+    function eventEqualKey(e, key){
+      return key && (e.keyCode == key.keyCode) && (e.ctrlKey == key.ctrlKey) && (e.shiftKey == key.shiftKey) && (e.altKey == key.altKey);
+    }
+
     var isPresenter = false;
     var isLatexRender = false;
     var isMarkdownRender = false;
     var isStyleRender = true;
     var lockContent = false;
     var style = "style1";
+
+    var shortcuts = {
+      "beginPresenter" : [ new key("F4", 115, false, false, false) , null ],
+      "stopPresenter" : [ new key("Escape", 27, false, false, false) , null ],
+      "goParent" : [ new key("ArrowLeft", 37, true, false, false) , null ],
+      "goPreviusSibling" : [ new key("ArrowUp", 38, true, false, false) , new key("PageUp", 33, false, false, false) ],
+      "goNextSibling" : [ new key("ArrowDown", 40, true, false, false) , new key("PageDown", 34, false, false, false) ],
+      "goFirstChild" : [ new key("ArrowRight", 39, true, false, false) , null ],
+    }
 
     var prev_isPresenter = isPresenter;
     var timerUpdateNodes;
@@ -133,25 +154,25 @@ window.addEventListener("keydown", function(e) {
 
     function shortcut(e) {
         e = e || window.event;
-        if ((e.ctrlKey && e.keyCode == '38') || (e.keyCode == '33')) {
+        if (eventEqualKey(e, shortcuts["goPreviusSibling"][0]) || eventEqualKey(e, shortcuts["goPreviusSibling"][1])) {
           goPreviusSibling();
         }
-        else if ((e.ctrlKey && e.keyCode == '40') || (e.keyCode == '34')) {
+        else if (eventEqualKey(e, shortcuts["goNextSibling"][0]) || eventEqualKey(e, shortcuts["goNextSibling"][1])) {
           goNextSibling();
         }
-        else if (e.ctrlKey && e.keyCode == '39') {
+        else if (eventEqualKey(e, shortcuts["goFirstChild"][0]) || eventEqualKey(e, shortcuts["goFirstChild"][1])) {
           goFirstChild();
         }
-        else if (e.ctrlKey && e.keyCode == '37') {
+        else if (eventEqualKey(e, shortcuts["goParent"][0]) || eventEqualKey(e, shortcuts["goParent"][1])) {
           goParent();
         }
-        else if (e.keyCode == '115' && !isPresenter) {
+        else if (eventEqualKey(e, shortcuts["beginPresenter"][0]) || eventEqualKey(e, shortcuts["beginPresenter"][1])) {
           isPresenter=true;
           addCSS();
           chrome.storage.sync.set({"presenter" : isPresenter});
 
         }
-        else if (e.keyCode == '27' && isPresenter) {
+        else if (eventEqualKey(e, shortcuts["stopPresenter"][0]) || eventEqualKey(e, shortcuts["stopPresenter"][1])) {
           isPresenter=false;
           deleteCSS();
           chrome.storage.sync.set({"presenter" : isPresenter});
@@ -184,8 +205,6 @@ window.addEventListener("keydown", function(e) {
 
 
       //addControllers();
-
-      document.addEventListener('keyup', shortcut, false);
 
       if(isPresenter) addCSS(); else deleteCSS();
 
@@ -241,6 +260,13 @@ window.addEventListener("keydown", function(e) {
           style = changes.style.newValue;
           $("#styleCSS").attr("href", chrome.extension.getURL('css/style/'+style+'.css'));
         };
+        for (var name in shortcuts){
+          if (shortcuts.hasOwnProperty(name)) {
+            if (name in changes) {
+              shortcuts[name] = changes[name].newValue;
+            };
+          }
+        }
        });
     };
     var callbackGetValue = function(vals) {
@@ -252,7 +278,12 @@ window.addEventListener("keydown", function(e) {
       style = vals.style;
       startWorking();
     };
+    var callbackGetShortcuts = function(vals) {
+      shortcuts = vals;
+      document.addEventListener('keyup', shortcut, false);
+    };
   chrome.storage.sync.get({"presenter":false, "isStyleRender":true, "isLatexRender":true, "isMarkdownRender":true, "lockContent":false, "style":"style1"}, callbackGetValue);
+  chrome.storage.sync.get(shortcuts, callbackGetShortcuts);
 
 	chrome.runtime.sendMessage({
 		type: 'showIcon'
