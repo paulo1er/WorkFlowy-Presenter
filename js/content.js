@@ -8,6 +8,16 @@ window.addEventListener("keydown", function(e) {
   }
 }, false);
 
+function waitForElement(elementPath, callBack){
+  window.setTimeout(function(){
+    if($(elementPath).length){
+      callBack(elementPath, $(elementPath));
+    }else{
+      waitForElement(elementPath, callBack);
+    }
+  },500)
+}
+
 (function($){
     var key = function(keyName, keyCode, ctrlKey, shiftKey, altKey){
       this.keyName= keyName;
@@ -29,7 +39,7 @@ window.addEventListener("keydown", function(e) {
     var style = "style1";
 
     var shortcuts = {
-      "beginPresenter" : [ new key("F4", 115, false, false, false) , null ],
+      "startPresenter" : [ new key("F4", 115, false, false, false) , null ],
       "stopPresenter" : [ new key("Escape", 27, false, false, false) , null ],
       "goParent" : [ new key("ArrowLeft", 37, true, false, false) , null ],
       "goPreviusSibling" : [ new key("ArrowUp", 38, true, false, false) , new key("PageUp", 33, false, false, false) ],
@@ -127,12 +137,28 @@ window.addEventListener("keydown", function(e) {
         .attr("id","goParent")
         .click(goParent)
         .text("<"));
+      waitForElement(".page", function(){
+        var w = $(".page").width();
+        var h = $(".page").height();
+        var ratio = 2;
+        if(w*ratio > $(document).width()*0.9) ratio = ($(document).width()*0.9) / w;
+        if(ratio < 1) ratio = 1;
+        console.log(ratio, $(".page"));
+        $(".page").css({
+          "transform-origin" : "center 0",
+          "transform" : 'scale('+ratio+')',
+        });
+      })
     };
     var deleteCSS = function() {
       console.log("Normal mode");
       $('#injectCSS').remove();
       $('#styleCSS').remove();
       $('#goParent').remove();
+      $(".page").css({
+        "transform-origin" : "",
+        "transform" : '',
+      });
     };
 
     function addControllers(){
@@ -174,7 +200,7 @@ window.addEventListener("keydown", function(e) {
         if (eventEqualKey(e, shortcuts["goParent"][0]) || eventEqualKey(e, shortcuts["goParent"][1])) {
           goParent();
         }
-        if (eventEqualKey(e, shortcuts["beginPresenter"][0]) || eventEqualKey(e, shortcuts["beginPresenter"][1])) {
+        if (eventEqualKey(e, shortcuts["startPresenter"][0]) || eventEqualKey(e, shortcuts["startPresenter"][1])) {
           isPresenter=true;
           addCSS();
           chrome.storage.sync.set({"presenter" : isPresenter});

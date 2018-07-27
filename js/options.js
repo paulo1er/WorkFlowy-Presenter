@@ -14,12 +14,21 @@ var key = function(keyName, keyCode, ctrlKey, shiftKey, altKey){
   this.altKey = altKey;
 }
 
+function copy(obj) {
+  if (null == obj || "object" != typeof obj) return obj;
+  var c = new obj.constructor();
+  for (var attr in obj) {
+      if (obj.hasOwnProperty(attr)) c[attr] = obj[attr];
+  }
+  return c;
+}
+
 function keyToString(key){
   return ( key.ctrlKey ? "Ctrl + " : "") + ( key.altKey ? "Alt + " : "") + ( key.shiftKey ? "Shift + " : "") + key.keyName;
 }
 
 var shortcuts = {
-  "beginPresenter" : [ new key("F4", 115, false, false, false) , null ],
+  "startPresenter" : [ new key("F4", 115, false, false, false) , null ],
   "stopPresenter" : [ new key("Escape", 27, false, false, false) , null ],
   "goParent" : [ new key("ArrowLeft", 37, true, false, false) , null ],
   "goPreviusSibling" : [ new key("ArrowUp", 38, true, false, false) , new key("PageUp", 33, false, false, false) ],
@@ -42,6 +51,11 @@ function onClick(){
   chrome.storage.sync.set(option, function(){});
 }
 
+function clickShortcut2(){
+  if($(this).parent().children(".shortcut1").text() == "")
+    $(this).parent().children(".shortcut1").focus();
+}
+
 function eventListener(e){
   var $focus = $(":focus");
   if(e.keyCode != 17 && e.keyCode != 16 && e.keyCode != 18  && e.keyCode != 46 && $focus.is("td.shortcut1, td.shortcut2")) {
@@ -50,13 +64,28 @@ function eventListener(e){
     if($focus.is("td.shortcut1")) shortcuts[name][0] = shortcut;
     else shortcuts[name][1] = shortcut;
     $focus.text(keyToString(shortcut));
+    console.log("The shortcut for "+name+" is now", shortcuts[name], $focus);
     chrome.storage.sync.set(shortcuts, function(){});
   }
   if(e.keyCode == 46) {
     var name = $focus.parent().attr('id');
-    if($focus.is("td.shortcut1")) shortcuts[name][0] = null;
-    else shortcuts[name][1] = null;
-    $focus.text("");
+    if($focus.is("td.shortcut1")){
+      if($focus.parent().children(".shortcut2").text() == ""){
+        shortcuts[name][0] = null;
+        $focus.text("");
+      }
+      else {
+        shortcuts[name][0] = copy(shortcuts[name][1]);
+        shortcuts[name][1] = null;
+        $focus.text($focus.parent().children(".shortcut2").text());
+        $focus.parent().children(".shortcut2").text("");
+      }
+    }
+    else{
+      shortcuts[name][1] = null;
+      $focus.text("");
+    }
+    console.log("The shortcut for "+name+" is now", shortcuts[name]);
     chrome.storage.sync.set(shortcuts, function(){});
   }
 }
@@ -71,6 +100,12 @@ function initValues(){
   for (var name in option){
     if (option.hasOwnProperty(name)) {
       $("#"+name).change(onClick);
+    }
+  }
+
+  for (var name in shortcuts){
+    if (shortcuts.hasOwnProperty(name)) {
+      $("#"+name).children(".shortcut2").click(clickShortcut2);
     }
   }
 
@@ -97,12 +132,11 @@ function initValues(){
     }
   });
 
-  path = chrome.extension.getURL('css/style/'+option["style"]+'.css');
   $('head').append($('<link>')
     .attr("id","styleCSS")
     .attr("rel","stylesheet")
     .attr("type","text/css")
-    .attr("href", path));
+    .attr("href", ""));
 }
 
 function callbackGetValue(vals){

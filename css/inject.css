@@ -53,8 +53,13 @@
 }
 
 .page{
-  zoom:2;
+  position: absolute;
   padding: 0;
+}
+
+
+body{
+  min-height: 100vh;
 }
 
 .mainTreeRoot{
