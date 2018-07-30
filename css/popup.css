@@ -9,6 +9,7 @@ input[type=checkbox] {
 	background: #555;
 	margin: auto;
 
+	cursor: pointer;
 	-webkit-border-radius: 50px;
 	position: relative;
 

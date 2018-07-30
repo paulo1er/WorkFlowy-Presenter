@@ -18,6 +18,11 @@ function initValues(){
     }
   }
 
+
+  $(".slide").click(function(){
+    $("#presenter").prop('checked', !$("#presenter").prop('checked')).trigger("change");
+  });
+
   chrome.storage.onChanged.addListener(function(changes, namespace) {
     for (var name in option){
       if (option.hasOwnProperty(name)) {
