@@ -114,6 +114,7 @@ function waitForElement(elementPath, callBack){
       if(path && path!= "") location.href = path;
       $('html, body').animate({ scrollTop: 0 }, 'fast');
     }
+
     var addCSS = function() {
       console.log("Presenter mode");
       var path = chrome.extension.getURL('css/inject.css');
@@ -148,6 +149,12 @@ function waitForElement(elementPath, callBack){
           "transform-origin" : "center 0",
           "transform" : 'scale('+ratio+')',
         });
+
+        $("#pageContainer").height($(".page").outerHeight(true)*ratio);
+        $(".page").bind('heightChange', function(){
+          $("#pageContainer").height($(".page").outerHeight(true)*ratio);
+        });
+
       })
     };
     var deleteCSS = function() {
@@ -159,6 +166,8 @@ function waitForElement(elementPath, callBack){
         "transform-origin" : "",
         "transform" : '',
       });
+      $(".page").unbind('heightChange');
+      $("#pageContainer").height("auto");
     };
 
     function addControllers(){
@@ -271,6 +280,14 @@ function waitForElement(elementPath, callBack){
 
       //addControllers();
 
+      var lastHeight = $(".page").css('height');
+      function checkForChanges(){
+        if ($(".page").css('height') != lastHeight){
+          $(".page").trigger('heightChange');
+          lastHeight = $(".page").css('height');
+        }
+      }
+      setInterval(checkForChanges, 100);
       if(isPresenter) addCSS(); else deleteCSS();
 
       var metaRenderLaTeX = $("[name=\'renderingLaTeX\']");
