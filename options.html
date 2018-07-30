@@ -17,69 +17,71 @@
 
       <div class="container-fluid">
         <div class="row">
-          <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3 well">
-            <div class="input-group">
-              <span class="input-group-addon">
-                <input type="checkbox" id="lockContent" class="form-check-input">
-              </span>
-              <label class="form-control" for="lockContent">Read-only in presenter mode <span id="needLock" hidden data-toggle="tooltip" data-placement="top" title="advise to lock the content"><i class="glyphicon glyphicon-warning-sign text-warning"></i></span></label>
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="well">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="checkbox" id="lockContent" class="form-check-input">
+                </span>
+                <label class="form-control" for="lockContent">Read-only in presenter mode <span id="needLock" hidden data-toggle="tooltip" data-placement="top" title="advise to lock the content"><i class="glyphicon glyphicon-warning-sign text-warning"></i></span></label>
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="checkbox" id="isAnimated" class="form-check-input">
+                </span>
+                <label class="form-control" for="isAnimated">Use WorkFlowy animations</label>
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="checkbox" id="isStyleRender" class="form-check-input">
+                </span>
+                <label class="form-control" for="isStyleRender">Render styles</label>
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="checkbox" id="isLatexRender" class="form-check-input">
+                </span>
+                <label class="form-control" for="isLatexRender">Render LaTeX</label>
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="checkbox" id="isMarkdownRender" class="form-check-input">
+                </span>
+                <label class="form-control" for="isMarkdownRender">Render Markdown</label>
+              </div>
             </div>
-            <div class="input-group">
-              <span class="input-group-addon">
-                <input type="checkbox" id="isAnimated" class="form-check-input">
-              </span>
-              <label class="form-control" for="isAnimated">Use WorkFlowy animations</label>
-            </div>
-            <div class="input-group">
-              <span class="input-group-addon">
-                <input type="checkbox" id="isStyleRender" class="form-check-input">
-              </span>
-              <label class="form-control" for="isStyleRender">Render styles</label>
-            </div>
-            <div class="input-group">
-              <span class="input-group-addon">
-                <input type="checkbox" id="isLatexRender" class="form-check-input">
-              </span>
-              <label class="form-control" for="isLatexRender">Render LaTeX</label>
-            </div>
-            <div class="input-group">
-              <span class="input-group-addon">
-                <input type="checkbox" id="isMarkdownRender" class="form-check-input">
-              </span>
-              <label class="form-control" for="isMarkdownRender">Render Markdown</label>
-            </div>
-          </div>
-          <div class="col-xs-12 col-sm-6 col-md-3 col-lg-3 well">
-            <div class="input-group">
-              <label for="style" class="input-group-addon">Themes</label>
-              <select id="style" class="form-control">
-                <option value="style1">Theme1</option>
-                <option value="style2">Theme2</option>
-                <option value="style3">Theme3</option>
-                <option value="style4">Theme4</option>
-                <option value="style5">Theme5</option>
-                <option value="style6">Theme6</option>
-              </select>
-            </div>
-            <div id="preview">
-              <div id="pageContainer">
-                <div>
-                  <div class="page">
-                    <div class="project selected initialLoad">
-                      <div class="name">
-                        <div class="content">Title</div>
-                      </div>
-                      <div class="children">
-                        <div class="project open initialLoad">
-                          <div class="name">
-                            <div class="bullet"></div>
-                            <div class="content">Lorem Ipsum</div>
-                          </div>
+            <div class="well">
+              <div class="input-group">
+                <label for="style" class="input-group-addon">Themes</label>
+                <select id="style" class="form-control">
+                  <option value="style1">Theme1</option>
+                  <option value="style2">Theme2</option>
+                  <option value="style3">Theme3</option>
+                  <option value="style4">Theme4</option>
+                  <option value="style5">Theme5</option>
+                  <option value="style6">Theme6</option>
+                </select>
+              </div>
+              <div id="preview">
+                <div id="pageContainer">
+                  <div>
+                    <div class="page">
+                      <div class="project selected initialLoad">
+                        <div class="name">
+                          <div class="content">Title</div>
                         </div>
-                        <div class="project open initialLoad">
-                          <div class="name">
-                            <div class="bullet"></div>
-                            <div class="content">Lorem Ipsum</div>
+                        <div class="children">
+                          <div class="project open initialLoad">
+                            <div class="name">
+                              <div class="bullet"></div>
+                              <div class="content">Lorem Ipsum</div>
+                            </div>
+                          </div>
+                          <div class="project open initialLoad">
+                            <div class="name">
+                              <div class="bullet"></div>
+                              <div class="content">Lorem Ipsum</div>
+                            </div>
                           </div>
                         </div>
                       </div>
