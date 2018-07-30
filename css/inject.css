@@ -20,6 +20,9 @@
 .proPitch{
   display: none;
 }
+.pageControls{
+  display: none;
+}
 
 #pageContainer{
   margin-top:5px;
