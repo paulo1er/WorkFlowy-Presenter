@@ -32,8 +32,8 @@ function waitForElement(elementPath, callBack){
     }
 
     var isPresenter = false;
-    var isLatexRender = false;
-    var isMarkdownRender = false;
+    var isLatexRender = true;
+    var isMarkdownRender = true;
     var isStyleRender = true;
     var lockContent = false;
     var isAnimated = true;

@@ -14,7 +14,6 @@ function initURLchange(){
 function checkURLchange(oldURL, currentURL){
   currentURL = window.location.href;
   if(currentURL != oldURL){
-    $(".selected .content").removeClass("tex2jax_ignore").addClass("tex2jax_process");
     var urlPrevious="";
     var urlNext="";
     var selected = project_tree.getProjectReferenceFromDomProject(selectOnActivePage(".selected"));
