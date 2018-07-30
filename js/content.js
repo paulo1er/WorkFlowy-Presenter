@@ -209,45 +209,45 @@ function waitForElement(elementPath, callBack){
         if (eventEqualKey(e, shortcuts["goParent"][0]) || eventEqualKey(e, shortcuts["goParent"][1])) {
           goParent();
         }
-        if (eventEqualKey(e, shortcuts["startPresenter"][0]) || eventEqualKey(e, shortcuts["startPresenter"][1])) {
+        if ((eventEqualKey(e, shortcuts["startPresenter"][0]) || eventEqualKey(e, shortcuts["startPresenter"][1])) && !isPresenter)  {
           isPresenter=true;
           addCSS();
           chrome.storage.sync.set({"presenter" : isPresenter});
         }
-        if (eventEqualKey(e, shortcuts["stopPresenter"][0]) || eventEqualKey(e, shortcuts["stopPresenter"][1])) {
+        if ((eventEqualKey(e, shortcuts["stopPresenter"][0]) || eventEqualKey(e, shortcuts["stopPresenter"][1])) && isPresenter) {
           isPresenter=false;
           deleteCSS();
           chrome.storage.sync.set({"presenter" : isPresenter});
         }
-        if (eventEqualKey(e, shortcuts["lockInPresenter"][0]) || eventEqualKey(e, shortcuts["lockInPresenter"][1])) {
+        if ((eventEqualKey(e, shortcuts["lockInPresenter"][0]) || eventEqualKey(e, shortcuts["lockInPresenter"][1])) && !lockContent) {
           lockContent=true;
           chrome.storage.sync.set({"lockContent" : lockContent});
         }
-        if (eventEqualKey(e, shortcuts["renderStyles"][0]) || eventEqualKey(e, shortcuts["renderStyles"][1])) {
+        if ((eventEqualKey(e, shortcuts["renderStyles"][0]) || eventEqualKey(e, shortcuts["renderStyles"][1])) && !isStyleRender) {
           isStyleRender=true;
           chrome.storage.sync.set({"isStyleRender" : isStyleRender});
         }
-        if (eventEqualKey(e, shortcuts["renderLaTeX"][0]) || eventEqualKey(e, shortcuts["renderLaTeX"][1])) {
+        if ((eventEqualKey(e, shortcuts["renderLaTeX"][0]) || eventEqualKey(e, shortcuts["renderLaTeX"][1])) && !isLatexRender ) {
           isLatexRender=true;
           chrome.storage.sync.set({"isLatexRender" : isLatexRender});
         }
-        if (eventEqualKey(e, shortcuts["renderMarkdown"][0]) || eventEqualKey(e, shortcuts["renderMarkdown"][1])) {
+        if ((eventEqualKey(e, shortcuts["renderMarkdown"][0]) || eventEqualKey(e, shortcuts["renderMarkdown"][1])) && !isMarkdownRender) {
           isMarkdownRender=true;
           chrome.storage.sync.set({"isMarkdownRender" : isMarkdownRender});
         }
-        if (eventEqualKey(e, shortcuts["unlockInPresenter"][0]) || eventEqualKey(e, shortcuts["unlockInPresenter"][1])) {
+        if ((eventEqualKey(e, shortcuts["unlockInPresenter"][0]) || eventEqualKey(e, shortcuts["unlockInPresenter"][1])) && lockContent) {
           lockContent=false;
           chrome.storage.sync.set({"lockContent" : lockContent});
         }
-        if (eventEqualKey(e, shortcuts["leaveStyles"][0]) || eventEqualKey(e, shortcuts["leaveStyles"][1])) {
+        if ((eventEqualKey(e, shortcuts["leaveStyles"][0]) || eventEqualKey(e, shortcuts["leaveStyles"][1])) && isStyleRender) {
           isStyleRender=false;
           chrome.storage.sync.set({"isStyleRender" : isStyleRender});
         }
-        if (eventEqualKey(e, shortcuts["leaveLaTeX"][0]) || eventEqualKey(e, shortcuts["leaveLaTeX"][1])) {
+        if ((eventEqualKey(e, shortcuts["leaveLaTeX"][0]) || eventEqualKey(e, shortcuts["leaveLaTeX"][1])) && isLatexRender) {
           isLatexRender=false;
           chrome.storage.sync.set({"isLatexRender" : isLatexRender});
         }
-        if (eventEqualKey(e, shortcuts["leaveMarkdown"][0]) || eventEqualKey(e, shortcuts["leaveMarkdown"][1])) {
+        if ((eventEqualKey(e, shortcuts["leaveMarkdown"][0]) || eventEqualKey(e, shortcuts["leaveMarkdown"][1])) && isMarkdownRender) {
           isMarkdownRender=false;
           chrome.storage.sync.set({"isMarkdownRender" : isMarkdownRender});
         }
