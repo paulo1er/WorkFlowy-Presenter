@@ -3,6 +3,7 @@ var option = {
   "isLatexRender" : true,
   "isMarkdownRender" : true,
   "lockContent" : false,
+  "isAnimated" : true,
   "style" : "style1"
 }
 
@@ -35,10 +36,12 @@ var shortcuts = {
   "goNextSibling" : [ new key("ArrowDown", 40, true, false, false) , new key("PageDown", 34, false, false, false) ],
   "goFirstChild" : [ new key("ArrowRight", 39, true, false, false) , null ],
   "lockInPresenter" : [ null, null],
+  "enableAnimation" : [ null, null],
   "renderStyles" : [ null, null],
   "renderLaTeX" : [ null, null],
   "renderMarkdown" : [ null, null],
   "unlockInPresenter" : [ null, null],
+  "disableAnimation" : [ null, null],
   "leaveStyles" : [ null, null],
   "leaveLaTeX" : [ null, null],
   "leaveMarkdown" : [ null, null],
