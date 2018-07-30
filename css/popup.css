@@ -3,6 +3,14 @@ input[type=checkbox] {
 	visibility: hidden;
 }
 
+#moreOptions{
+	cursor: pointer;
+
+}
+
+#moreOptions:hover{
+	background-color: #d5d5d5;
+}
 .slide {
 	width: 80px;
 	height: 26px;
