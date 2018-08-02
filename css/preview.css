@@ -14,9 +14,17 @@ td:focus {
   border: 1px solid black;
 }
 
+#mlnw{
+  color: rgb(136, 136, 136);
+  position: absolute;
+  bottom: 0px;
+  left: 40px;
+}
+
 .page{
   margin: 0 0px 0 0px;
   padding:5px 0 20px 0;
+  height:180px;
   background-color:rgb(255,255,255);
 }
 
