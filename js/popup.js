@@ -1,14 +1,11 @@
 var option = {
-  "presenter" : false,
-  "previewColours" : true,
-  "isLatexRender" : true,
-  "isImageRender" : true,
-  "lockContent" : false,
+  "presenter" : false
 }
 
 function onClick(){
   var name = $(this).attr('id');
-  option[name] = $(this).prop('checked');
+  if($(this).prop("type") == "checkbox") option[name] = $(this).prop('checked');
+  else option[name] = $(this).val();
   chrome.storage.sync.set(option, function(){});
 }
 
@@ -22,12 +19,28 @@ function initValues(){
   }
 
 
+  $(".slide").click(function(){
+    $("#presenter").prop('checked', !$("#presenter").prop('checked')).trigger("change");
+  });
+
+  $("#moreOptions").click(function(){
+    var optionsUrl = chrome.extension.getURL('options.html');
+    chrome.tabs.query({url: optionsUrl}, function(tabs) {
+      if (tabs.length) {
+        chrome.tabs.update(tabs[0].id, {active: true});
+      } else {
+        chrome.tabs.create({url: optionsUrl});
+      }
+    });
+  });
+
   chrome.storage.onChanged.addListener(function(changes, namespace) {
     for (var name in option){
       if (option.hasOwnProperty(name)) {
         if (name in changes) {
           option[name] = changes[name].newValue;
-          $("#"+name).attr('checked', option[name]);
+          if($("#"+name).prop("type") == "checkbox") $("#"+name).prop('checked', option[name]);
+          else $("#"+name).val(option[name]);
         };
         warningOptionSelected();
       }
@@ -39,15 +52,14 @@ function callbackGetValue(vals){
   option=vals;
   for (var name in option){
     if (option.hasOwnProperty(name)) {
-      $("#"+name).attr('checked', option[name]);
+      if($("#"+name).prop("type") == "checkbox") $("#"+name).prop('checked', option[name]);
+      else $("#"+name).val(option[name]);
     }
   }
   warningOptionSelected();
 }
 
 function warningOptionSelected(){
-  if(!(option["isLatexRender"]  || option["isImageRender"])  || option["lockContent"]) $("#needLock").hide();
-  else $("#needLock").show();
 }
 
 $(document).ready(function(){

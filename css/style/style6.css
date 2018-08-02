@@ -1,0 +1,52 @@
+
+.selected.project > .name {
+  padding: 21px 60px 10px 60px;
+  margin: -15px -60px 6px -60px;
+  background: repeating-linear-gradient(
+      45deg,
+      #25CABF,
+      #25CABF 10px,
+      #00C0B6 10px,
+      #00C0B6 20px
+    );
+}
+.selected.project > .name::after {
+    position:absolute;
+    left:100%;
+    top:100%;
+    content:" ";
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 20px 20px;
+    margin: -20px -20px;
+    border-color: transparent transparent #212121 transparent;
+}
+
+@media print {
+  .selected.project > .name::after {
+    border-color: transparent;
+  }
+}
+.name{
+  color: white;
+}
+
+@media print {
+  .name{
+    color: black;
+  }
+}
+
+.page {
+    background: #212121;
+    border-color: #212121;
+}
+body{
+    background-color: #151515;
+}
+
+.highlighted::before{
+  background-color:#3E7A6F;
+  opacity:0.5;
+}

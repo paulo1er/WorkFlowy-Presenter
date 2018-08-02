@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> WorkFlowy Presenter, options </title>
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/preview.css" rel="stylesheet">
+</head>
+<body>
+  <div class="panel panel-info position-absolute" style="min-width:200px; min-height:100%; margin:0;">
+    <div class="panel-heading" id="popupTitle" style="padding:10px 0;">
+      <h2 style="margin: 0;">
+        <img src="image/icon.png" style="float: none; margin: 0 10px; width:1.5em;">
+        <span id="title">WorkFlowy Presenter</span>
+      </h2>
+    </div>
+    <div class="panel-body">
+
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+            <div class="well">
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="checkbox" id="lockContent" class="form-check-input">
+                </span>
+                <label class="form-control" for="lockContent">Read-only in presenter mode <span id="needLock" hidden data-toggle="tooltip" data-placement="top" title="advise to lock the content"><i class="glyphicon glyphicon-warning-sign text-warning"></i></span></label>
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="checkbox" id="isAnimated" class="form-check-input">
+                </span>
+                <label class="form-control" for="isAnimated">Use WorkFlowy animations</label>
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="checkbox" id="isStyleRender" class="form-check-input">
+                </span>
+                <label class="form-control" for="isStyleRender">Render styles</label>
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="checkbox" id="isLatexRender" class="form-check-input">
+                </span>
+                <label class="form-control" for="isLatexRender">Render LaTeX</label>
+              </div>
+              <div class="input-group">
+                <span class="input-group-addon">
+                  <input type="checkbox" id="isMarkdownRender" class="form-check-input">
+                </span>
+                <label class="form-control" for="isMarkdownRender">Render Markdown</label>
+              </div>
+            </div>
+            <div class="well">
+              <div class="input-group">
+                <label for="style" class="input-group-addon">Themes</label>
+                <select id="style" class="form-control">
+                  <option value="style1">Theme1</option>
+                  <option value="style2">Theme2</option>
+                  <option value="style3">Theme3</option>
+                  <option value="style4">Theme4</option>
+                  <option value="style5">Theme5</option>
+                  <option value="style6">Theme6</option>
+                </select>
+              </div>
+              <div id="preview">
+                <div id="pageContainer">
+                  <div>
+                    <div class="page">
+                      <div class="project selected initialLoad">
+                        <div class="name">
+                          <div class="content">Title</div>
+                        </div>
+                        <div class="children">
+                          <div class="project open initialLoad">
+                            <div class="name">
+                              <div class="bullet"></div>
+                              <div class="content">Lorem Ipsum</div>
+                            </div>
+                          </div>
+                          <div class="project open initialLoad">
+                            <div class="name">
+                              <div class="bullet"></div>
+                              <div class="content">Lorem Ipsum</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <span id='mlnw'>Make lists. Not war.</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 well">
+            <h4 class="text-center">Shortcuts</h4>
+            <table class="table table-bordered table-condensed">
+              <thead>
+                <tr><th>Name</th><th>Shortcut 1</th><th>Shortcut 2</th></tr>
+              </thead>
+              <tbody>
+                <tr id="startPresenter">
+                  <td>Start presenter</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="stopPresenter">
+                  <td>Stop presenter</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="goParent">
+                  <td>Go parent</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="goPreviusSibling">
+                  <td>Go previus sibling</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="goNextSibling">
+                  <td>Go next sibling</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="goFirstChild">
+                  <td>Go first child</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="lockInPresenter">
+                  <td>Lock in presenter</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="unlockInPresenter">
+                  <td>Unlock in presenter</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="enableAnimation">
+                  <td>Enable animation</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="disableAnimation">
+                  <td>Disable animation</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="renderStyles">
+                  <td>Render styles</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="leaveStyles">
+                  <td>Leave styles</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="renderLaTeX">
+                  <td>Render LaTeX</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="leaveLaTeX">
+                  <td>Leave LaTeX</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="renderMarkdown">
+                  <td>Render Markdown</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+                <tr id="leaveMarkdown">
+                  <td>Leave Markdown</td>
+                  <td class="shortcut1" tabindex="0"></td>
+                  <td class="shortcut2" tabindex="0"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-footer" style="padding:0;">
+      <div class="text-center" style="padding:10px 0;">
+        <a href="https://github.com/paulo1er/WorkFlowy-Presenter" role="button" class="btn btn-info" target="_blank"><span>Source code</span></a>
+        <a href="Help.html" role="button" class="btn btn-info" target="_blank"><span>Help</span></a>
+        <a href="LICENSE" role="button" class="btn btn-info" target="_blank"><span >LICENSE</span></a>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/options.js"></script>
+</body>
+</html>

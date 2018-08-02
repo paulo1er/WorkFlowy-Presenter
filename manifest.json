@@ -1,8 +1,8 @@
 {
  "manifest_version": 2,
  "name": "WorkFlowy Presenter",
-  "version": "1.0.0",
-  "version_name": "1.O rc",
+  "version": "3.0",
+  "version_name": "2.0",
   "description": "Presenter for workflowy.com.",
   "background": {
     "scripts":["js/background.js"]
@@ -10,7 +10,7 @@
   "content_scripts": [
     {
       "matches": ["https://workflowy.com/*"],
-      "js": ["js/jquery.min.js", "js/content.js"]
+      "js": ["js/jquery.min.js", "js/content.js", "js/modal.js"]
     }
   ],
   "icons": {
@@ -23,11 +23,12 @@
     "default_popup": "popup.html"
   },
   "permissions": ["tabs", "storage"],
-  "options_page": "popup.html",
+  "options_page": "options.html",
   "web_accessible_resources":  [
     "css/*.css",
-    "js/render.js",
+    "modal.html",
     "js/inject.js",
-    "js/image.js"
+    "js/latex.js",
+    "js/markdown.js"
   ]
 }

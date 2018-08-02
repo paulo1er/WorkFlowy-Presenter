@@ -1,59 +1,77 @@
-div.content-img img {
+.content-img img {
   max-width: 95%;
 }
 
-.selected.project > .name {
-  color: #4d7ecc !important;
-  padding: 12px 60px !important;
-  background-color: #EEEEEE !important;
-  margin: 10px 0 0 0 !important;
-  margin-left: -60px !important;
-  margin-right: -60px !important;
-}
-
 .content .contentTag, .nameAnimated .contentTag {
-  display: none !important;
+  display: none;
 }
 
 .content .contentTagText, .nameAnimated .contentTagText {
-  text-decoration: none !important;
-}
-
-.content .contentTag:hover {
-  background: #2D8853 !important;
-}
-
-.content .contentMatch {
-  background-color: transparent !important;
-  color: yellow !important;
+  text-decoration: none;
 }
 
 #header div:not(.show){
-  display: none !important;
+  display: none;
 }
 
+#bottomLinks{
+  display: none;
+}
+.proPitch{
+  display: none;
+}
+.pageControls{
+  display: none;
+}
 
 #pageContainer{
-  margin-top:0 !important;
+  margin-top:5px;
 }
 .showCompleted{
-  padding-top: 0 !important;
+  padding-top: 0;
 }
 
 .pageStar{
-  display: none !important;
+  display: none;
 }
 .moreControlsButton{
-  margin-right: 0 !important;
-  z-index: 3 !important;
+  margin-right: 0;
+  z-index: 3;
 }
 
 #getMoreSpaceButtonTopRight{
-  display: none !important;
+  display: none;
 }
 
 .parent > .name {
-  display: none !important;
+  display: none;
+}
+
+.children {
+  border-left: 0px;
+}
+
+.footer{
+  display: none;
+}
+
+.page{
+  position: absolute;
+  padding: 0;
+}
+
+
+body{
+  min-height: 100vh;
+}
+
+.mainTreeRoot{
+  min-height: calc(50vh - 70px);
+}
+
+.page > .project {
+  margin: 10px 10px;
+  padding: 0px 50px;
 }
 
 #goParent {
@@ -69,4 +87,23 @@ div.content-img img {
 #goParent:hover {
     background-color: #ddd;
     color: black;
+}
+
+
+
+@media print {
+  @page {
+    margin: 0;
+  }
+  body * {
+    visibility: hidden;
+  }
+  .page, .page * {
+    visibility: visible;
+  }
+
+  .page{
+    zoom:1;
+    padding:10px !important;
+  }
 }

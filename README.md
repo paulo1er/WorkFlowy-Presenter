@@ -10,16 +10,17 @@ It convert list from WorkFlowy to a presentable text for giving a talk.
 
 Change the CSS of workflowy.com for only keep the useful information.
 
-- display the tag
+- hide the tag
 - keep a minimal header
-- display the path from root to your current item
-- put forward the title
+- hide the path from root to your current item
+- hide the header
+- change the webpage Theme1
 
 ### Lock Content
 
 By activate this option you can't modify the content of workflowy.
 
-### Preview styles
+### Render styles
 
 This option is used to apply some style to only one item by tag.
 
@@ -54,10 +55,8 @@ This option transform :
 - ?\[Title](www.myVideo.com) to a video
 - \[Name](www.myURL.com) to a link.
 
-### Other
-
-In Presenter mode you can
-- use PageDown or Ctrl+ArrowDown to go to the next item.
-- use PageUp or Ctrl+ArrowUp to go to the previous item.
+## Other
 
 In the header of presenter mode, the button '<' is used to go to the parent of the curent item.
+
+You can add, edit and use a lot of shortcut for all the previus functionality.

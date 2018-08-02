@@ -1,0 +1,28 @@
+.selected.project > .name {
+  padding: 6px 0px;
+  text-align: left;
+  margin: 0px 0px 10px 0px;
+}
+
+.name{
+  color: #1D243C;
+}
+
+.page {
+  background-color: #E5EAEA;
+}
+
+.page::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-repeat: repeat;
+  height: 30px;
+  background-size: 80px 30px;
+  background-image:
+   -webkit-radial-gradient(20px 10px, 20px 5px, #1D243C 19px, transparent),
+   -webkit-radial-gradient(60px 10px, 20px 5px, #E5EAEA 19px, transparent),
+   -webkit-linear-gradient(transparent 10px, #1D243C 1px);
+}

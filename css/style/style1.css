@@ -1,0 +1,10 @@
+.selected.project > .name {
+  color: #4d7ecc;
+  padding: 21px 60px 10px 60px;
+  background-color: #EEEEEE;
+  margin: -15px -60px 6px -60px;
+}
+
+.highlighted::before{
+  background-color:#CEDFFA;
+}

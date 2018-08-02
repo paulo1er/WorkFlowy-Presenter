@@ -2,18 +2,67 @@ String.prototype.replaceAll = function(find, replace) {
     return this.split(find).join(replace);
 };
 
+window.addEventListener("keydown", function(e) {
+  if((e.keyCode == '33') || (e.keyCode == '34')){
+    e.preventDefault();
+  }
+}, false);
+
+function waitForElement(elementPath, callBack){
+  window.setTimeout(function(){
+    if($(elementPath).length){
+      callBack(elementPath, $(elementPath));
+    }else{
+      waitForElement(elementPath, callBack);
+    }
+  },500)
+}
+
 (function($){
+    var key = function(keyName, keyCode, ctrlKey, shiftKey, altKey){
+      this.keyName= keyName;
+      this.keyCode = keyCode;
+      this.ctrlKey = ctrlKey;
+      this.shiftKey = shiftKey;
+      this.altKey = altKey;
+    }
+
+    function eventEqualKey(e, key){
+      return key && (e.keyCode == key.keyCode) && (e.ctrlKey == key.ctrlKey) && (e.shiftKey == key.shiftKey) && (e.altKey == key.altKey);
+    }
+
     var isPresenter = false;
-    var isLatexRender = false;
-    var isImageRender = false;
-    var previewColours = true;
+    var isLatexRender = true;
+    var isMarkdownRender = true;
+    var isStyleRender = true;
     var lockContent = false;
+    var isAnimated = true;
+    var style = "style1";
+
+    var shortcuts = {
+      "startPresenter" : [ new key("F4", 115, false, false, false) , null ],
+      "stopPresenter" : [ new key("Escape", 27, false, false, false) , null ],
+      "goParent" : [ new key("ArrowLeft", 37, true, false, false) , null ],
+      "goPreviusSibling" : [ new key("ArrowUp", 38, true, false, false) , new key("PageUp", 33, false, false, false) ],
+      "goNextSibling" : [ new key("ArrowDown", 40, true, false, false) , new key("PageDown", 34, false, false, false) ],
+      "goFirstChild" : [ new key("ArrowRight", 39, true, false, false) , null ],
+      "lockInPresenter" : [ null, null],
+      "enableAnimation" : [ null, null],
+      "renderStyles" : [ null, null],
+      "renderLaTeX" : [ null, null],
+      "renderMarkdown" : [ null, null],
+      "unlockInPresenter" : [ null, null],
+      "disableAnimation" : [ null, null],
+      "leaveStyles" : [ null, null],
+      "leaveLaTeX" : [ null, null],
+      "leaveMarkdown" : [ null, null],
+    }
 
     var prev_isPresenter = isPresenter;
     var timerUpdateNodes;
     var updateNodes = function() {
       $(".selected .content").each(function() {
-        $(this).attr('contentEditable', !lockContent);
+        $(this).attr('contentEditable', !(lockContent && isPresenter));
         var node = $(this);
         var styles = {};
         for (var p in properties) {
@@ -23,7 +72,7 @@ String.prototype.replaceAll = function(find, replace) {
         }
         styles["line-height"] = "1.3em";
 
-        if(!previewColours) node.removeAttr('style');
+        if(!isStyleRender) node.removeAttr('style');
         else{
           node.children(".contentTag").children(".contentTagText").each(function() {
             var tagText = $(this).text();
@@ -46,14 +95,31 @@ String.prototype.replaceAll = function(find, replace) {
       timerUpdateNodes = setInterval(updateNodes, 300);
     };
     function goParent() {
-      var parentPath = $(".selected").parent().parent().children(".name").children(".bullet").attr("href");
-      if(parentPath)
-        location.href = parentPath;
+      var path = $(".selected").parent().parent().children(".name").children(".bullet").attr("href");
+      if(path)
+        location.href = path;
       else
         location.href = "/#/";
+      $('html, body').animate({ scrollTop: 0 }, 'fast');
     }
+    function goFirstChild() {
+      var path = $(".selected").children(".children").children(".project").first().children(".name").children(".bullet").attr("href");
+      if(path) location.href = path;
+      $('html, body').animate({ scrollTop: 0 }, 'fast');
+    }
+    function goNextSibling(){
+      var path = $('meta[name=urlNext]').attr("content");
+      if(path && path!= "") location.href = path;
+      $('html, body').animate({ scrollTop: 0 }, 'fast');
+    }
+    function goPreviusSibling(){
+      var path = $('meta[name=urlPrevious]').attr("content");
+      if(path && path!= "") location.href = path;
+      $('html, body').animate({ scrollTop: 0 }, 'fast');
+    }
+
     var addCSS = function() {
-      console.log("presenter mode");
+      console.log("Presenter mode");
       var path = chrome.extension.getURL('css/inject.css');
       $('head').append($('<link>')
           .attr("id","injectCSS")
@@ -61,83 +127,145 @@ String.prototype.replaceAll = function(find, replace) {
           .attr("type","text/css")
           .attr("href", path));
 
+      path = chrome.extension.getURL('css/style/'+style+'.css');
+      $('head').append($('<link>')
+          .attr("id","styleCSS")
+          .attr("rel","stylesheet")
+          .attr("type","text/css")
+          .attr("href", path));
+
+
       $("#logo:not([class*='show'])").addClass("show");
       $("#searchForm:not([class*='show'])").addClass("show");
       $('#header').append($('<a>')
         .attr("id","goParent")
         .click(goParent)
         .text("<"));
-      document.addEventListener('keyup', shortcut, false);
+      waitForElement(".page", function(){
+        var w = $(".page").width();
+        var h = $(".page").height();
+        var ratio = 2;
+        if(w*ratio > $(document).width()*0.9) ratio = ($(document).width()*0.9) / w;
+        if(ratio < 1) ratio = 1;
+        console.log(ratio, $(".page"));
+        $(".page").css({
+          "transform-origin" : "center 0",
+          "transform" : 'scale('+ratio+')',
+        });
+
+        $("#pageContainer").height($(".page").outerHeight(true)*ratio);
+        $(".page").bind('heightChange', function(){
+          $("#pageContainer").height($(".page").outerHeight(true)*ratio);
+        });
+
+      })
     };
     var deleteCSS = function() {
-      console.log("normal mode");
+      console.log("Normal mode");
       $('#injectCSS').remove();
+      $('#styleCSS').remove();
       $('#goParent').remove();
-      document.removeEventListener('keyup', shortcut, false);
+      $(".page").css({
+        "transform-origin" : "",
+        "transform" : '',
+      });
+      $(".page").unbind('heightChange');
+      $("#pageContainer").height("auto");
     };
 
     function addControllers(){
-      $('#controlsLeft').append("<hr>")
-      var inputFontColor = $("<input>").attr("type","color").val("#000000").hide();
-      inputFontColor.on("change",function() {
-        var content = $(this).parent().parent().parent().children(".content");
-        content.children(".contentTag").children(".contentTagText").each(function() {
-          var cf = /^wfe-font-color:(?:([a-z]*)|rgb:([0-9a-f]*))$/i.exec($(this).text());
-          if(cf != null) {
-            $(this).parent().remove();
-          }
-        });
-        content.focus();
-        var tagToAdd = "#wfe-font-color:rgb:" + $(this).val().slice(1);
-        if(content.text()[content.text().length - 1] != " ") tagToAdd = " " + tagToAdd;
-        content.html(content.html() + tagToAdd);
-        $(this).val("#000000");
-        content.blur();
+      var path = chrome.extension.getURL('css/modal.css');
+      $('head').append($('<link>')
+          .attr("id","modalCSS")
+          .attr("rel","stylesheet")
+          .attr("type","text/css")
+          .attr("href", path));
+      path = chrome.extension.getURL('modal.html');
+      $.ajax({
+        url: path,
+        success: function (data) {
+          $('#documentView').append(data);
+          modal();
+        },
+        dataType: 'html'
       });
-      var aFontColor =  $("<a>").text("Font color");
-      aFontColor.click(function(){
-        inputFontColor.click();
-      })
-      $('#controlsLeft').append(inputFontColor);
-      $('#controlsLeft').append(aFontColor);
 
-      var inputBackground = $("<input>").attr("type","color").val("#FFFFFF").hide();
-      inputBackground.on("change",function() {
-        var content = $(this).parent().parent().parent().children(".content");
-        content.children(".contentTag").children(".contentTagText").each(function() {
-          var cf = /^wfe-background:(?:([a-z]*)|rgb:([0-9a-f]*))$/i.exec($(this).text());
-          if(cf != null) {
-            $(this).parent().remove();
-          }
-        });
-        content.focus();
-        var tagToAdd = "#wfe-background:rgb:" + $(this).val().slice(1);
-        if(content.text()[content.text().length - 1] != " ") tagToAdd = " " + tagToAdd;
-        content.html(content.html() + tagToAdd);
-        $(this).val("#FFFFFF");
-        content.blur();
-      });
-      var aBackground =  $("<a>").text("Background");
-      aBackground.click(function(){
-        inputBackground.click();
-      })
-      $('#controlsLeft').append(inputBackground);
-      $('#controlsLeft').append(aBackground);
+
+      window.onclick = function(event) {
+        if (event.target == modal[0]) {
+          modal.css("display", "none");
+        }
+      }
     }
 
     function shortcut(e) {
         e = e || window.event;
-        if ((e.ctrlKey && e.keyCode == '38') || (e.keyCode == '33')) {
-          var path = $('meta[name=urlPrevious]').attr("content");
-          if(path && path!= "") location.href = path;
+        if (eventEqualKey(e, shortcuts["goPreviusSibling"][0]) || eventEqualKey(e, shortcuts["goPreviusSibling"][1])) {
+          goPreviusSibling();
         }
-        else if ((e.ctrlKey && e.keyCode == '40') || (e.keyCode == '34')) {
-          var path = $('meta[name=urlNext]').attr("content");
-          if(path && path!= "") location.href = path;
+        if (eventEqualKey(e, shortcuts["goNextSibling"][0]) || eventEqualKey(e, shortcuts["goNextSibling"][1])) {
+          goNextSibling();
+        }
+        if (eventEqualKey(e, shortcuts["goFirstChild"][0]) || eventEqualKey(e, shortcuts["goFirstChild"][1])) {
+          goFirstChild();
+        }
+        if (eventEqualKey(e, shortcuts["goParent"][0]) || eventEqualKey(e, shortcuts["goParent"][1])) {
+          goParent();
+        }
+        if ((eventEqualKey(e, shortcuts["startPresenter"][0]) || eventEqualKey(e, shortcuts["startPresenter"][1])) && !isPresenter)  {
+          isPresenter=true;
+          addCSS();
+          chrome.storage.sync.set({"presenter" : isPresenter});
+        }
+        else if ((eventEqualKey(e, shortcuts["stopPresenter"][0]) || eventEqualKey(e, shortcuts["stopPresenter"][1])) && isPresenter) {
+          isPresenter=false;
+          deleteCSS();
+          chrome.storage.sync.set({"presenter" : isPresenter});
+        }
+        if ((eventEqualKey(e, shortcuts["lockInPresenter"][0]) || eventEqualKey(e, shortcuts["lockInPresenter"][1])) && !lockContent) {
+          lockContent=true;
+          chrome.storage.sync.set({"lockContent" : lockContent});
+        }
+        else if ((eventEqualKey(e, shortcuts["unlockInPresenter"][0]) || eventEqualKey(e, shortcuts["unlockInPresenter"][1])) && lockContent) {
+          lockContent=false;
+          chrome.storage.sync.set({"lockContent" : lockContent});
+        }
+        if ((eventEqualKey(e, shortcuts["enableAnimation"][0]) || eventEqualKey(e, shortcuts["enableAnimation"][1])) && !isAnimated) {
+          isAnimated=true;
+          chrome.storage.sync.set({"isAnimated" : isAnimated});
+        }
+        else if ((eventEqualKey(e, shortcuts["disableAnimation"][0]) || eventEqualKey(e, shortcuts["disableAnimation"][1])) && isAnimated) {
+          isAnimated=false;
+          chrome.storage.sync.set({"isAnimated" : isAnimated});
+        }
+        if ((eventEqualKey(e, shortcuts["renderStyles"][0]) || eventEqualKey(e, shortcuts["renderStyles"][1])) && !isStyleRender) {
+          isStyleRender=true;
+          chrome.storage.sync.set({"isStyleRender" : isStyleRender});
+        }
+        else if ((eventEqualKey(e, shortcuts["leaveStyles"][0]) || eventEqualKey(e, shortcuts["leaveStyles"][1])) && isStyleRender) {
+          isStyleRender=false;
+          chrome.storage.sync.set({"isStyleRender" : isStyleRender});
+        }
+        if ((eventEqualKey(e, shortcuts["renderLaTeX"][0]) || eventEqualKey(e, shortcuts["renderLaTeX"][1])) && !isLatexRender ) {
+          isLatexRender=true;
+          chrome.storage.sync.set({"isLatexRender" : isLatexRender});
+        }
+        else if ((eventEqualKey(e, shortcuts["leaveLaTeX"][0]) || eventEqualKey(e, shortcuts["leaveLaTeX"][1])) && isLatexRender) {
+          isLatexRender=false;
+          chrome.storage.sync.set({"isLatexRender" : isLatexRender});
+        }
+        if ((eventEqualKey(e, shortcuts["renderMarkdown"][0]) || eventEqualKey(e, shortcuts["renderMarkdown"][1])) && !isMarkdownRender) {
+          isMarkdownRender=true;
+          chrome.storage.sync.set({"isMarkdownRender" : isMarkdownRender});
+        }
+        else if ((eventEqualKey(e, shortcuts["leaveMarkdown"][0]) || eventEqualKey(e, shortcuts["leaveMarkdown"][1])) && isMarkdownRender) {
+          isMarkdownRender=false;
+          chrome.storage.sync.set({"isMarkdownRender" : isMarkdownRender});
         }
     };
 
     var startWorking = function() {
+      console.log(isStyleRender ? "START Rendering Style" : "STOP Rendering Style");
       document.addEventListener("DOMNodeInserted", startTimer);
 
 
@@ -149,11 +277,11 @@ String.prototype.replaceAll = function(find, replace) {
           .attr("href", path));
 
       var s = document.createElement('script');
-      s.src = chrome.extension.getURL("js/image.js");
+      s.src = chrome.extension.getURL("js/markdown.js");
       (document.head||document.documentElement).appendChild(s);
 
       s = document.createElement('script');
-      s.src = chrome.extension.getURL("js/render.js");
+      s.src = chrome.extension.getURL("js/latex.js");
       (document.head||document.documentElement).appendChild(s);
 
       s = document.createElement('script');
@@ -163,21 +291,29 @@ String.prototype.replaceAll = function(find, replace) {
 
       //addControllers();
 
+      var lastHeight = $(".page").css('height');
+      function checkForChanges(){
+        if ($(".page").css('height') != lastHeight){
+          $(".page").trigger('heightChange');
+          lastHeight = $(".page").css('height');
+        }
+      }
+      setInterval(checkForChanges, 100);
       if(isPresenter) addCSS(); else deleteCSS();
 
-      var metaRender = $("[name=\'rendering\']");
-      if(!metaRender.length){
-        metaRender = $("<meta>").attr("name", "rendering").attr("content", isLatexRender);
-        $("head").append(metaRender);
+      var metaRenderLaTeX = $("[name=\'renderingLaTeX\']");
+      if(!metaRenderLaTeX.length){
+        metaRenderLaTeX = $("<meta>").attr("name", "renderingLaTeX").attr("content", isLatexRender);
+        $("head").append(metaRenderLaTeX);
       }
-      metaRender.attr("content", isLatexRender);
+      metaRenderLaTeX.attr("content", isLatexRender);
 
-      var metaRenderImage = $("[name=\'renderingImage\']");
-      if(!metaRenderImage.length){
-        metaRenderImage = $("<meta>").attr("name", "renderingImage").attr("content", isImageRender);
-        $("head").append(metaRenderImage);
+      var metaRenderMarkdown = $("[name=\'renderingMarkdown\']");
+      if(!metaRenderMarkdown.length){
+        metaRenderMarkdown = $("<meta>").attr("name", "renderingMarkdown").attr("content", isMarkdownRender);
+        $("head").append(metaRenderMarkdown);
       }
-      metaRenderImage.attr("content", isImageRender);
+      metaRenderMarkdown.attr("content", isMarkdownRender);
 
       var metaLock = $("[name=\'lock\']");
       if(!metaLock.length){
@@ -185,6 +321,14 @@ String.prototype.replaceAll = function(find, replace) {
         $("head").append(metaLock);
       }
       metaLock.attr("content", lockContent);
+
+      var metaAnime = $("[name=\'isAnimated\']");
+      if(!metaAnime.length){
+        metaAnime = $("<meta>").attr("name", "isAnimated").attr("content", isAnimated);
+        $("head").append(metaAnime);
+      }
+      metaAnime.attr("content", isAnimated);
+
 
       chrome.storage.onChanged.addListener(function(changes, namespace) {
         if ("presenter" in changes) {
@@ -196,33 +340,56 @@ String.prototype.replaceAll = function(find, replace) {
           }
           startTimer();
         };
-        if ("previewColours" in changes) {
-          previewColours = changes.previewColours.newValue;
+        if ("isStyleRender" in changes) {
+          isStyleRender = changes.isStyleRender.newValue;
+          console.log(isStyleRender ? "START Rendering Style" : "STOP Rendering Style");
           startTimer();
         };
         if ("isLatexRender" in changes) {
           isLatexRender = changes.isLatexRender.newValue;
-          metaRender.attr("content", isLatexRender);
+          metaRenderLaTeX.attr("content", isLatexRender);
         };
-        if ("isImageRender" in changes) {
-          isImageRender = changes.isImageRender.newValue;
-          metaRenderImage.attr("content", isImageRender);
+        if ("isMarkdownRender" in changes) {
+          isMarkdownRender = changes.isMarkdownRender.newValue;
+          metaRenderMarkdown.attr("content", isMarkdownRender);
         };
         if ("lockContent" in changes) {
           lockContent = changes.lockContent.newValue;
           metaLock.attr("content", lockContent);
         };
+        if ("isAnimated" in changes) {
+          isAnimated = changes.isAnimated.newValue;
+          metaAnime.attr("content", isAnimated);
+        };
+        if ("style" in changes) {
+          style = changes.style.newValue;
+          $("#styleCSS").attr("href", chrome.extension.getURL('css/style/'+style+'.css'));
+        };
+        for (var name in shortcuts){
+          if (shortcuts.hasOwnProperty(name)) {
+            if (name in changes) {
+              shortcuts[name] = changes[name].newValue;
+            };
+          }
+        }
        });
     };
     var callbackGetValue = function(vals) {
       isPresenter = vals.presenter;
-      previewColours = vals.previewColours;
+      isStyleRender = vals.isStyleRender;
       isLatexRender = vals.isLatexRender;
-      isImageRender = vals.isImageRender;
+      isMarkdownRender = vals.isMarkdownRender;
       lockContent = vals.lockContent;
+      isAnimated = vals.isAnimated;
+      style = vals.style;
       startWorking();
     };
-  chrome.storage.sync.get({"presenter":false, "previewColours":true, "isLatexRender":true, "isImageRender":true, "lockContent":false}, callbackGetValue);
+    var callbackGetShortcuts = function(vals) {
+      shortcuts = vals;
+      document.addEventListener('keyup', shortcut, false);
+    };
+  chrome.storage.sync.get({"presenter":false, "isStyleRender":true, "isLatexRender":true, "isMarkdownRender":true, "lockContent":false, "isAnimated":true, "style":"style1"}, callbackGetValue);
+  chrome.storage.sync.get(shortcuts, callbackGetShortcuts);
 
 	chrome.runtime.sendMessage({
 		type: 'showIcon'
@@ -236,6 +403,13 @@ class Color{
 		this.Blue = args[2];
 	}
 	toString(){return "rgb("+this.Red+", "+this.Green+", "+this.Blue+")"}
+  toHexa(){
+    function componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    }
+    return "#" + componentToHex(this.Red) + componentToHex(this.Green ) + componentToHex(this.Blue);
+  }
 };
 
 function hexaToColor(hexa){
