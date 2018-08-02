@@ -147,10 +147,12 @@ function waitForElement(elementPath, callBack){
         var ratio = 2;
         if(w*ratio > $(document).width()*0.9) ratio = ($(document).width()*0.9) / w;
         if(ratio < 1) ratio = 1;
-        console.log(ratio, $(".page"));
+        var minHeight = ($(document).height()/ratio)-40 ;
+        console.log(minHeight);
         $(".page").css({
           "transform-origin" : "center 0",
           "transform" : 'scale('+ratio+')',
+          "min-height" : minHeight,
         });
 
         $("#pageContainer").height($(".page").outerHeight(true)*ratio);
@@ -168,6 +170,7 @@ function waitForElement(elementPath, callBack){
       $(".page").css({
         "transform-origin" : "",
         "transform" : '',
+        "min-height" : '',
       });
       $(".page").unbind('heightChange');
       $("#pageContainer").height("auto");
