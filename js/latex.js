@@ -122,9 +122,10 @@
     return is_mergeable;
   }
 
-  var oldGetTextForContent = content_text.getTextForContent;
-  content_text.getTextForContent = function(e) {
-    mathjaxHtmlToText(e);
-    return oldGetTextForContent.apply(this, arguments);
+  var oldFunction = jQuery.fn.saveContent;
+  jQuery.fn.saveContent = function() {
+    mathjaxHtmlToText($(this));
+    return oldFunction.apply(this, arguments);
   }
+
 })();

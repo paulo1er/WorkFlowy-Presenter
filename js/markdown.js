@@ -2,16 +2,18 @@
 
   function imageHtmlToText(b) {
     b.find("a.markdownImage").each(function() {
+      var otherLink = '';
       var img = $(this).children("img");
-      $(this).replaceWith('!['+img.attr("alt")+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+img.attr("src")+'">'+img.attr("src")+'</a>)') ;
+      if($(this).attr("data-otherLink") != '')  otherLink = $(this).attr("data-otherLink");
+      $(this).replaceWith('!['+img.attr("alt")+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+img.attr("src")+'">'+img.attr("src")+'</a>'+otherLink+')') ;
     });
     return b.html();
   }
 
-  var regexImage = /!\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
+  var regexImage = /!\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>( [^\)]*)?\)/g;
   function textToImageHtml(b) {
     if(regexImage.test(b.html()))
-      b.html(b.html().replace(regexImage, "<a href='$2' class='markdownImage' target='_blank'><img src='$2' alt='$1' style='display: block;max-width:"+b.width()+"px;width: auto;height: auto;'></a>"));
+      b.html(b.html().replace(regexImage, "<a href='$2' class='markdownImage' target='_blank' data-otherLink='$4'><img src='$2' alt='$1' style='display: block;max-width:"+b.width()+"px;width: auto;height: auto;'></a>"));
     return b.html();
   }
 
@@ -161,6 +163,7 @@
 
   $(window).load(function() {
     initRenderingMarkdown();
+    console.log(window);
   });
 
   var oldProjectIsMergeable2 = jQuery.fn.projectIsMergable;
@@ -176,12 +179,13 @@
     return is_mergeable;
   }
 
-  var oldGetTextForContent = content_text.getTextForContent;
-  content_text.getTextForContent = function(e) {
-    imageHtmlToText(e);
-    videoHtmlToText(e);
-    linkHtmlToText(e);
-    emojiHtmlToText(e);
-    return oldGetTextForContent.apply(this, arguments);
+  var oldFunction = jQuery.fn.saveContent;
+  jQuery.fn.saveContent = function() {
+    imageHtmlToText($(this));
+    videoHtmlToText($(this));
+    linkHtmlToText($(this));
+    emojiHtmlToText($(this));
+    return oldFunction.apply(this, arguments);
   }
+
 })();

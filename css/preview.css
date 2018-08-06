@@ -19,6 +19,8 @@ td:focus {
   position: absolute;
   bottom: 0px;
   left: 40px;
+  z-index: 100;
+  font-size: 10px;
 }
 
 .page{
