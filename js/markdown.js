@@ -2,16 +2,18 @@
 
   function imageHtmlToText(b) {
     b.find("a.markdownImage").each(function() {
+      var otherLink = '';
       var img = $(this).children("img");
-      $(this).replaceWith('!['+img.attr("alt")+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+img.attr("src")+'">'+img.attr("src")+'</a>)') ;
+      if($(this).attr("data-otherLink") != '')  otherLink = $(this).attr("data-otherLink");
+      $(this).replaceWith('!['+img.attr("alt")+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+img.attr("src")+'">'+img.attr("src")+'</a>'+otherLink+')') ;
     });
     return b.html();
   }
 
-  var regexImage = /!\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
+  var regexImage = /!\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>( [^\)]*)?\)/g;
   function textToImageHtml(b) {
     if(regexImage.test(b.html()))
-      b.html(b.html().replace(regexImage, "<a href='$2' class='markdownImage' target='_blank'><img src='$2' alt='$1' style='display: block;max-width:"+b.width()+"px;width: auto;height: auto;'></a>"));
+      b.html(b.html().replace(regexImage, "<a href='$2' class='markdownImage' target='_blank' data-otherLink='$4'><img src='$2' alt='$1' style='display: block;max-width:"+b.width()+"px;width: auto;height: auto;'></a>"));
     return b.html();
   }
 
@@ -31,17 +33,15 @@
 
   function linkHtmlToText(b) {
     b.find("a.markdownLink").each(function() {
-      var otherLink = '';
-      if($(this).attr("data-otherLink") != '')  otherLink = $(this).attr("data-otherLink");
-      $(this).replaceWith('['+$(this).text()+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+$(this).attr("href")+'">'+$(this).attr("href")+'</a>'+otherLink+')') ;
+      $(this).replaceWith('['+$(this).text()+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+$(this).attr("href")+'">'+$(this).attr("href")+'</a>)') ;
     });
     return b.html();
   }
 
-  var regexLink = /\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>( [^\)]*)?\)/g;
+  var regexLink = /\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
   function textToLinkHtml(b) {
     if(regexLink.test(b.html()))
-      b.html(b.html().replace(regexLink, "<a href='$2' class='contentLink markdownLink' target='_blank' data-otherLink='$4'>$1</a>"));
+      b.html(b.html().replace(regexLink, "<a href='$2' class='contentLink markdownLink' target='_blank'>$1</a>"));
     return b.html();
   }
 
