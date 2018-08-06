@@ -78,8 +78,7 @@ function waitForElement(elementPath, callBack){
             var tagText = $(this).text();
             for (var p in properties) {
               if (properties.hasOwnProperty(p)){
-                var value = properties[p].val(tagText);
-                if(value!="") styles[properties[p].name] = value;
+                styles = $.extend(styles, properties[p].styles(tagText));
               }
             }
           });
@@ -433,6 +432,12 @@ class Propertie{
   val(tagText){
     var attr = this.regex.exec(tagText);
     return this.exec(attr);
+  }
+  styles(tagText){
+    var styles = {};
+    var value = this.val(tagText);
+    if(value!="") styles[this.name] = value;
+    return styles;
   }
 }
 var properties = {

@@ -31,15 +31,17 @@
 
   function linkHtmlToText(b) {
     b.find("a.markdownLink").each(function() {
-      $(this).replaceWith('['+$(this).text()+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+$(this).attr("href")+'">'+$(this).attr("href")+'</a>)') ;
+      var otherLink = '';
+      if($(this).attr("data-otherLink") != '')  otherLink = $(this).attr("data-otherLink");
+      $(this).replaceWith('['+$(this).text()+'](<a class="contentLink" target="_blank" rel="noreferrer" href="'+$(this).attr("href")+'">'+$(this).attr("href")+'</a>'+otherLink+')') ;
     });
     return b.html();
   }
 
-  var regexLink = /\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>\)/g;
+  var regexLink = /\[([-a-zA-Z0-9@:%_\+.~#?&//=\s]*)\]\(<a class="contentLink" target="_blank" rel="noreferrer" href="([-a-zA-Z0-9@:%_\+.~#?&//=]*)">([-a-zA-Z0-9@:%_\+.~#?&//=]*)<\/a>( [^\)]*)?\)/g;
   function textToLinkHtml(b) {
     if(regexLink.test(b.html()))
-      b.html(b.html().replace(regexLink, "<a href='$2' class='contentLink markdownLink' target='_blank'>$1</a>"));
+      b.html(b.html().replace(regexLink, "<a href='$2' class='contentLink markdownLink' target='_blank' data-otherLink='$4'>$1</a>"));
     return b.html();
   }
 
@@ -161,6 +163,7 @@
 
   $(window).load(function() {
     initRenderingMarkdown();
+    console.log(window);
   });
 
   var oldProjectIsMergeable2 = jQuery.fn.projectIsMergable;
@@ -176,12 +179,13 @@
     return is_mergeable;
   }
 
-  var oldGetTextForContent = content_text.getTextForContent;
-  content_text.getTextForContent = function(e) {
-    imageHtmlToText(e);
-    videoHtmlToText(e);
-    linkHtmlToText(e);
-    emojiHtmlToText(e);
-    return oldGetTextForContent.apply(this, arguments);
+  var oldFunction = jQuery.fn.saveContent;
+  jQuery.fn.saveContent = function() {
+    imageHtmlToText($(this));
+    videoHtmlToText($(this));
+    linkHtmlToText($(this));
+    emojiHtmlToText($(this));
+    return oldFunction.apply(this, arguments);
   }
+
 })();

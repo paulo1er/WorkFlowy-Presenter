@@ -5,31 +5,36 @@ function initURLchange(){
   $("head").append($("<meta>").attr("name", "urlNext").attr("content", ""));
   waitLoad(function(){
     var interval = setInterval(function(){
-      try {checkURLchange(oldURL, currentURL)}
-      catch {clearInterval(interval); console.warn("previous and next siblings doesn't work")}
+      try {currentURL = window.location.href; checkURLchange(oldURL, currentURL); oldURL = currentURL;}
+      catch(err) {clearInterval(interval); console.warn("previous and next siblings doesn't work\n", err)}
     }, 1000);
   });
 }
 
 function checkURLchange(oldURL, currentURL){
-  currentURL = window.location.href;
   if(currentURL != oldURL){
+    /*
+    var selected = $(".selected").getProject();
+    console.log(selected);
     var urlPrevious="";
     var urlNext="";
-    var selected = project_tree.getProjectReferenceFromDomProject(selectOnActivePage(".selected"));
-    var previous = selected.getPreviousPotentiallyVisibleSibling();
+
+    var previous = selected.getPreviousProject();
     if (previous != null){
-      var temp =  previous.projectid.split("-");
-      urlPrevious = "https://workflowy.com/#/" + temp[temp.length-1];
+      console.log("previous", previous);
+      //var temp =  previous.projectid.split("-");
+      //urlPrevious = "https://workflowy.com/#/" + temp[temp.length-1];
     }
-    var next = selected.getNextPotentiallyVisibleSibling();
+
+    var next = selected.next();
     if (next != null){
-      var temp =  next.projectid.split("-");
-      urlNext = "https://workflowy.com/#/" + temp[temp.length-1];
+      console.log("next", next);
+      //var temp =  next.projectid.split("-");
+      //urlNext = "https://workflowy.com/#/" + temp[temp.length-1];
     }
     $("[name=\'urlPrevious\']").attr("content", urlPrevious);
     $("[name=\'urlNext\']").attr("content", urlNext);
-    oldURL = currentURL;
+    */
   }
 }
 
@@ -40,11 +45,14 @@ $(window).load(function() {
 });
 
 function waitLoad(callback){
-  if($('.selected').length) callback();
+  if($('.selected').length){
+    callback();
+  }
   else
     setTimeout(function(){
       waitLoad(callback);
     }, 1000);
+
 }
 
 
