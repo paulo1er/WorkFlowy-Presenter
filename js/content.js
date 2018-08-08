@@ -106,16 +106,6 @@ function waitForElement(elementPath, callBack){
       if(path) location.href = path;
       $('html, body').animate({ scrollTop: 0 }, 'fast');
     }
-    function goNextSibling(){
-      var path = $('meta[name=urlNext]').attr("content");
-      if(path && path!= "") location.href = path;
-      $('html, body').animate({ scrollTop: 0 }, 'fast');
-    }
-    function goPreviusSibling(){
-      var path = $('meta[name=urlPrevious]').attr("content");
-      if(path && path!= "") location.href = path;
-      $('html, body').animate({ scrollTop: 0 }, 'fast');
-    }
 
     var addCSS = function() {
       console.log("Presenter mode");
@@ -202,12 +192,6 @@ function waitForElement(elementPath, callBack){
 
     function shortcut(e) {
         e = e || window.event;
-        if (eventEqualKey(e, shortcuts["goPreviusSibling"][0]) || eventEqualKey(e, shortcuts["goPreviusSibling"][1])) {
-          goPreviusSibling();
-        }
-        if (eventEqualKey(e, shortcuts["goNextSibling"][0]) || eventEqualKey(e, shortcuts["goNextSibling"][1])) {
-          goNextSibling();
-        }
         if (eventEqualKey(e, shortcuts["goFirstChild"][0]) || eventEqualKey(e, shortcuts["goFirstChild"][1])) {
           goFirstChild();
         }
@@ -371,6 +355,8 @@ function waitForElement(elementPath, callBack){
           if (shortcuts.hasOwnProperty(name)) {
             if (name in changes) {
               shortcuts[name] = changes[name].newValue;
+              if(name=="goNextSibling") $("[name='shortcutNext']").attr("content", JSON.stringify(shortcuts["goNextSibling"]));
+              if(name=="goPreviusSibling") $("[name='shortcutPrevious']").attr("content", JSON.stringify(shortcuts["goPreviusSibling"]));
             };
           }
         }
@@ -389,6 +375,21 @@ function waitForElement(elementPath, callBack){
     var callbackGetShortcuts = function(vals) {
       shortcuts = vals;
       document.addEventListener('keyup', shortcut, false);
+
+      var metaShortcutNext = $("[name='shortcutNext']");
+      if(!metaShortcutNext.length){
+        metaShortcutNext = $("<meta>").attr("name", "shortcutNext");
+        $("head").append(metaShortcutNext);
+      }
+      metaShortcutNext.attr("content", JSON.stringify(shortcuts["goNextSibling"]));
+
+      var metaShortcutPrevious = $("[name='shortcutPrevious']");
+      if(!metaShortcutPrevious.length){
+        metaShortcutPrevious = $("<meta>").attr("name", "shortcutPrevious");
+        $("head").append(metaShortcutPrevious);
+      }
+      metaShortcutPrevious.attr("content", JSON.stringify(shortcuts["goPreviusSibling"]));
+
     };
   chrome.storage.sync.get({"presenter":false, "isStyleRender":true, "isLatexRender":true, "isMarkdownRender":true, "lockContent":false, "isAnimated":true, "style":"style1"}, callbackGetValue);
   chrome.storage.sync.get(shortcuts, callbackGetShortcuts);
