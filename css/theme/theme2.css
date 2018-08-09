@@ -14,3 +14,7 @@
 .highlighted::before{
   background-color:#D5E88B;
 }
+
+.footer{
+  bottom: -8px;
+}

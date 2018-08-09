@@ -51,7 +51,6 @@ function initURLchange(){
             shiftKey:true,
             type:"keydown",
           });
-          event.preventDefault();
           event.stopPropagation();
         }
         if (eventEqualKey(e, shortcutPrevious[0]) || eventEqualKey(e, shortcutPrevious[1])) {
@@ -63,8 +62,11 @@ function initURLchange(){
             shiftKey:true,
             type:"keydown",
           });
-          event.preventDefault();
           event.stopPropagation();
+        }
+
+        if((e.keyCode == '33') || (e.keyCode == '34')){
+          e.preventDefault();
         }
       })
     }

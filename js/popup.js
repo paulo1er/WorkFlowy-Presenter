@@ -1,5 +1,5 @@
 var option = {
-  "presenter" : false
+  "isPresenter" : false
 }
 
 function onClick(){
@@ -20,7 +20,7 @@ function initValues(){
 
 
   $(".slide").click(function(){
-    $("#presenter").prop('checked', !$("#presenter").prop('checked')).trigger("change");
+    $("#isPresenter").prop('checked', !$("#isPresenter").prop('checked')).trigger("change");
   });
 
   $("#moreOptions").click(function(){

@@ -2,12 +2,6 @@ String.prototype.replaceAll = function(find, replace) {
     return this.split(find).join(replace);
 };
 
-window.addEventListener("keydown", function(e) {
-  if((e.keyCode == '33') || (e.keyCode == '34')){
-    e.preventDefault();
-  }
-}, false);
-
 function waitForElement(elementPath, callBack){
   window.setTimeout(function(){
     if($(elementPath).length){
@@ -19,401 +13,396 @@ function waitForElement(elementPath, callBack){
 }
 
 (function($){
-    var key = function(keyName, keyCode, ctrlKey, shiftKey, altKey){
-      this.keyName= keyName;
-      this.keyCode = keyCode;
-      this.ctrlKey = ctrlKey;
-      this.shiftKey = shiftKey;
-      this.altKey = altKey;
-    }
+  var key = function(keyName, keyCode, ctrlKey, shiftKey, altKey){
+    this.keyName= keyName;
+    this.keyCode = keyCode;
+    this.ctrlKey = ctrlKey;
+    this.shiftKey = shiftKey;
+    this.altKey = altKey;
+  }
 
-    function eventEqualKey(e, key){
-      return key && (e.keyCode == key.keyCode) && (e.ctrlKey == key.ctrlKey) && (e.shiftKey == key.shiftKey) && (e.altKey == key.altKey);
-    }
+  function eventEqualKey(e, key){
+    return key && (e.keyCode == key.keyCode) && (e.ctrlKey == key.ctrlKey) && (e.shiftKey == key.shiftKey) && (e.altKey == key.altKey);
+  }
 
-    var isPresenter = false;
-    var isLatexRender = true;
-    var isMarkdownRender = true;
-    var isStyleRender = true;
-    var lockContent = false;
-    var isAnimated = true;
-    var style = "style1";
-    var mlnw = "Make list. Not war";
+  var options = {
+    "isPresenter" : false,
+    "isStyleRender" : true,
+    "isLatexRender" : true,
+    "isMarkdownRender" : true,
+    "lockContent" : false,
+    "isAnimated" : true,
+    "theme" : "theme1",
+    "mlnw" : "Make list. Not war",
+  }
 
-    var shortcuts = {
-      "startPresenter" : [ new key("F4", 115, false, false, false) , null ],
-      "stopPresenter" : [ new key("Escape", 27, false, false, false) , null ],
-      "goParent" : [ new key("ArrowLeft", 37, true, false, false) , null ],
-      "goPreviusSibling" : [ new key("ArrowUp", 38, true, false, false) , new key("PageUp", 33, false, false, false) ],
-      "goNextSibling" : [ new key("ArrowDown", 40, true, false, false) , new key("PageDown", 34, false, false, false) ],
-      "goFirstChild" : [ new key("ArrowRight", 39, true, false, false) , null ],
-      "lockInPresenter" : [ null, null],
-      "enableAnimation" : [ null, null],
-      "renderStyles" : [ null, null],
-      "renderLaTeX" : [ null, null],
-      "renderMarkdown" : [ null, null],
-      "unlockInPresenter" : [ null, null],
-      "disableAnimation" : [ null, null],
-      "leaveStyles" : [ null, null],
-      "leaveLaTeX" : [ null, null],
-      "leaveMarkdown" : [ null, null],
-    }
+  var shortcuts = {
+    "startPresenter" : [ new key("F4", 115, false, false, false) , null ],
+    "stopPresenter" : [ new key("Escape", 27, false, false, false) , null ],
+    "goParent" : [ new key("ArrowLeft", 37, true, false, false) , null ],
+    "goPreviusSibling" : [ new key("ArrowUp", 38, true, false, false) , new key("PageUp", 33, false, false, false) ],
+    "goNextSibling" : [ new key("ArrowDown", 40, true, false, false) , new key("PageDown", 34, false, false, false) ],
+    "goFirstChild" : [ new key("ArrowRight", 39, true, false, false) , null ],
+    "lockInPresenter" : [ null, null],
+    "enableAnimation" : [ null, null],
+    "renderStyles" : [ null, null],
+    "renderLaTeX" : [ null, null],
+    "renderMarkdown" : [ null, null],
+    "unlockInPresenter" : [ null, null],
+    "disableAnimation" : [ null, null],
+    "leaveStyles" : [ null, null],
+    "leaveLaTeX" : [ null, null],
+    "leaveMarkdown" : [ null, null],
+  }
 
-    var prev_isPresenter = isPresenter;
-    var timerUpdateNodes;
-    var updateNodes = function() {
-      $(".selected .content").each(function() {
-        $(this).attr('contentEditable', !(lockContent && isPresenter));
-        var node = $(this);
-        var styles = {};
-        for (var p in properties) {
-          if (properties.hasOwnProperty(p)){
-            styles[properties[p].name]="";
-          }
+  var prev_isPresenter = options["isPresenter"];
+
+  var timerUpdateNodes;
+  var updateNodes = function() {
+    $(".selected .content").each(function() {
+      $(this).attr('contentEditable', !(options["lockContent"] && options["isPresenter"]));
+      var node = $(this);
+      var styles = {};
+      for (var p in properties) {
+        if (properties.hasOwnProperty(p)){
+          styles[properties[p].name]="";
         }
-        styles["line-height"] = "1.3em";
+      }
+      styles["line-height"] = "1.3em";
 
-        if(!isStyleRender) node.removeAttr('style');
-        else{
-          node.children(".contentTag").children(".contentTagText").each(function() {
-            var tagText = $(this).text();
-            for (var p in properties) {
-              if (properties.hasOwnProperty(p)){
-                styles = $.extend(styles, properties[p].styles(tagText));
-              }
+      if(!options["isStyleRender"]) node.removeAttr('style');
+      else{
+        node.children(".contentTag").children(".contentTagText").each(function() {
+          var tagText = $(this).text();
+          for (var p in properties) {
+            if (properties.hasOwnProperty(p)){
+              styles = $.extend(styles, properties[p].styles(tagText));
             }
-          });
-          node.css(styles);
-        }
-      });
+          }
+        });
+        node.css(styles);
+      }
+    });
+    clearInterval(timerUpdateNodes);
+  };
+  var startTimer = function() {
+    if (timerUpdateNodes) {
       clearInterval(timerUpdateNodes);
     };
-    var startTimer = function() {
-      if (timerUpdateNodes) {
-        clearInterval(timerUpdateNodes);
-      };
-      timerUpdateNodes = setInterval(updateNodes, 300);
-    };
-    function goParent() {
-      var path = $(".selected").parent().parent().children(".name").children(".bullet").attr("href");
-      if(path)
-        location.href = path;
-      else
-        location.href = "/#/";
-      $('html, body').animate({ scrollTop: 0 }, 'fast');
-    }
-    function goFirstChild() {
-      var path = $(".selected").children(".children").children(".project").first().children(".name").children(".bullet").attr("href");
-      if(path) location.href = path;
-      $('html, body').animate({ scrollTop: 0 }, 'fast');
-    }
+    timerUpdateNodes = setInterval(updateNodes, 300);
+  };
+  function goParent() {
+    var path = $(".selected").parent().parent().children(".name").children(".bullet").attr("href");
+    if(path)
+      location.href = path;
+    else
+      location.href = "/#/";
+    $('html, body').animate({ scrollTop: 0 }, 'fast');
+  }
+  function goFirstChild() {
+    var path = $(".selected").children(".children").children(".project").first().children(".name").children(".bullet").attr("href");
+    if(path) location.href = path;
+    $('html, body').animate({ scrollTop: 0 }, 'fast');
+  }
 
-    var addCSS = function() {
-      console.log("Presenter mode");
-      var path = chrome.extension.getURL('css/inject.css');
-      $('head').append($('<link>')
-          .attr("id","injectCSS")
-          .attr("rel","stylesheet")
-          .attr("type","text/css")
-          .attr("href", path));
+  var addCSS = function() {
+    console.log("Presenter mode");
+    var path = chrome.extension.getURL('css/inject.css');
+    $('head').append($('<link>')
+        .attr("id","injectCSS")
+        .attr("rel","stylesheet")
+        .attr("type","text/css")
+        .attr("href", path));
 
-      path = chrome.extension.getURL('css/style/'+style+'.css');
-      $('head').append($('<link>')
-          .attr("id","styleCSS")
-          .attr("rel","stylesheet")
-          .attr("type","text/css")
-          .attr("href", path));
+    path = chrome.extension.getURL('css/theme/'+options["theme"]+'.css');
+    $('head').append($('<link>')
+        .attr("id","themeCSS")
+        .attr("rel","stylesheet")
+        .attr("type","text/css")
+        .attr("href", path));
 
-
-      $("#logo:not([class*='show'])").addClass("show");
-      $("#searchForm:not([class*='show'])").addClass("show");
-      $('#header').append($('<a>')
-        .attr("id","goParent")
-        .click(goParent)
-        .text("<"));
-      waitForElement(".page", function(){
-        var w = $(".page").width();
-        var h = $(".page").height();
-        var ratio = 2;
-        if(w*ratio > $(document).width()*0.9) ratio = ($(document).width()*0.9) / w;
-        if(ratio < 1) ratio = 1;
-        var minHeight = ($(document).height()/ratio)-40 ;
-        console.log(minHeight);
-        $(".page").css({
-          "transform-origin" : "center 0",
-          "transform" : 'scale('+ratio+')',
-          "min-height" : minHeight,
-        });
-
-        $("#pageContainer").height($(".page").outerHeight(true)*ratio);
-        $(".page").bind('heightChange', function(){
-          $("#pageContainer").height($(".page").outerHeight(true)*ratio);
-        });
-
-      })
-    };
-    var deleteCSS = function() {
-      console.log("Normal mode");
-      $('#injectCSS').remove();
-      $('#styleCSS').remove();
-      $('#goParent').remove();
+    $("#logo:not([class*='show'])").addClass("show");
+    $("#searchForm:not([class*='show'])").addClass("show");
+    $('#header').append($('<a>')
+      .attr("id","goParent")
+      .click(goParent)
+      .text("<"));
+    waitForElement(".page", function(){
+      var w = $(".page").width();
+      var h = $(".page").height();
+      var ratio = 2;
+      if(w*ratio > $(document).width()*0.9) ratio = ($(document).width()*0.9) / w;
+      if(ratio < 1) ratio = 1;
+      var minHeight = ($(document).height()/ratio)-40 ;
+      console.log(minHeight);
       $(".page").css({
-        "transform-origin" : "",
-        "transform" : '',
-        "min-height" : '',
-      });
-      $(".page").unbind('heightChange');
-      $("#pageContainer").height("auto");
-    };
-
-    function addControllers(){
-      var path = chrome.extension.getURL('css/modal.css');
-      $('head').append($('<link>')
-          .attr("id","modalCSS")
-          .attr("rel","stylesheet")
-          .attr("type","text/css")
-          .attr("href", path));
-      path = chrome.extension.getURL('modal.html');
-      $.ajax({
-        url: path,
-        success: function (data) {
-          $('#documentView').append(data);
-          modal();
-        },
-        dataType: 'html'
+        "transform-origin" : "center 0",
+        "transform" : 'scale('+ratio+')',
+        "min-height" : minHeight,
       });
 
+      $("#pageContainer").height($(".page").outerHeight(true)*ratio);
+      $(".page").bind('heightChange', function(){
+        $("#pageContainer").height($(".page").outerHeight(true)*ratio);
+      });
 
-      window.onclick = function(event) {
-        if (event.target == modal[0]) {
-          modal.css("display", "none");
-        }
+    })
+  };
+  var deleteCSS = function() {
+    console.log("Normal mode");
+    $('#injectCSS').remove();
+    $('#themeCSS').remove();
+    $('#goParent').remove();
+    $(".page").css({
+      "transform-origin" : "",
+      "transform" : '',
+      "min-height" : '',
+    });
+    $(".page").unbind('heightChange');
+    $("#pageContainer").height("auto");
+  };
+
+  function addControllers(){
+    var path = chrome.extension.getURL('css/modal.css');
+    $('head').append($('<link>')
+        .attr("id","modalCSS")
+        .attr("rel","stylesheet")
+        .attr("type","text/css")
+        .attr("href", path));
+    path = chrome.extension.getURL('modal.html');
+    $.ajax({
+      url: path,
+      success: function (data) {
+        $('#documentView').append(data);
+        modal();
+      },
+      dataType: 'html'
+    });
+
+
+    window.onclick = function(event) {
+      if (event.target == modal[0]) {
+        modal.css("display", "none");
       }
     }
+  }
 
-    function shortcut(e) {
-        e = e || window.event;
-        if (eventEqualKey(e, shortcuts["goFirstChild"][0]) || eventEqualKey(e, shortcuts["goFirstChild"][1])) {
-          goFirstChild();
-        }
-        if (eventEqualKey(e, shortcuts["goParent"][0]) || eventEqualKey(e, shortcuts["goParent"][1])) {
-          goParent();
-        }
-        if ((eventEqualKey(e, shortcuts["startPresenter"][0]) || eventEqualKey(e, shortcuts["startPresenter"][1])) && !isPresenter)  {
-          isPresenter=true;
-          addCSS();
-          chrome.storage.sync.set({"presenter" : isPresenter});
-        }
-        else if ((eventEqualKey(e, shortcuts["stopPresenter"][0]) || eventEqualKey(e, shortcuts["stopPresenter"][1])) && isPresenter) {
-          isPresenter=false;
-          deleteCSS();
-          chrome.storage.sync.set({"presenter" : isPresenter});
-        }
-        if ((eventEqualKey(e, shortcuts["lockInPresenter"][0]) || eventEqualKey(e, shortcuts["lockInPresenter"][1])) && !lockContent) {
-          lockContent=true;
-          chrome.storage.sync.set({"lockContent" : lockContent});
-        }
-        else if ((eventEqualKey(e, shortcuts["unlockInPresenter"][0]) || eventEqualKey(e, shortcuts["unlockInPresenter"][1])) && lockContent) {
-          lockContent=false;
-          chrome.storage.sync.set({"lockContent" : lockContent});
-        }
-        if ((eventEqualKey(e, shortcuts["enableAnimation"][0]) || eventEqualKey(e, shortcuts["enableAnimation"][1])) && !isAnimated) {
-          isAnimated=true;
-          chrome.storage.sync.set({"isAnimated" : isAnimated});
-        }
-        else if ((eventEqualKey(e, shortcuts["disableAnimation"][0]) || eventEqualKey(e, shortcuts["disableAnimation"][1])) && isAnimated) {
-          isAnimated=false;
-          chrome.storage.sync.set({"isAnimated" : isAnimated});
-        }
-        if ((eventEqualKey(e, shortcuts["renderStyles"][0]) || eventEqualKey(e, shortcuts["renderStyles"][1])) && !isStyleRender) {
-          isStyleRender=true;
-          chrome.storage.sync.set({"isStyleRender" : isStyleRender});
-        }
-        else if ((eventEqualKey(e, shortcuts["leaveStyles"][0]) || eventEqualKey(e, shortcuts["leaveStyles"][1])) && isStyleRender) {
-          isStyleRender=false;
-          chrome.storage.sync.set({"isStyleRender" : isStyleRender});
-        }
-        if ((eventEqualKey(e, shortcuts["renderLaTeX"][0]) || eventEqualKey(e, shortcuts["renderLaTeX"][1])) && !isLatexRender ) {
-          isLatexRender=true;
-          chrome.storage.sync.set({"isLatexRender" : isLatexRender});
-        }
-        else if ((eventEqualKey(e, shortcuts["leaveLaTeX"][0]) || eventEqualKey(e, shortcuts["leaveLaTeX"][1])) && isLatexRender) {
-          isLatexRender=false;
-          chrome.storage.sync.set({"isLatexRender" : isLatexRender});
-        }
-        if ((eventEqualKey(e, shortcuts["renderMarkdown"][0]) || eventEqualKey(e, shortcuts["renderMarkdown"][1])) && !isMarkdownRender) {
-          isMarkdownRender=true;
-          chrome.storage.sync.set({"isMarkdownRender" : isMarkdownRender});
-        }
-        else if ((eventEqualKey(e, shortcuts["leaveMarkdown"][0]) || eventEqualKey(e, shortcuts["leaveMarkdown"][1])) && isMarkdownRender) {
-          isMarkdownRender=false;
-          chrome.storage.sync.set({"isMarkdownRender" : isMarkdownRender});
-        }
+  function shortcut(e) {
+      e = e || window.event;
+      if (eventEqualKey(e, shortcuts["goFirstChild"][0]) || eventEqualKey(e, shortcuts["goFirstChild"][1])) {
+        goFirstChild();
+      }
+      if (eventEqualKey(e, shortcuts["goParent"][0]) || eventEqualKey(e, shortcuts["goParent"][1])) {
+        goParent();
+      }
+      if ((eventEqualKey(e, shortcuts["startPresenter"][0]) || eventEqualKey(e, shortcuts["startPresenter"][1])) && !options["isPresenter"])  {
+        options["isPresenter"]=true;
+        addCSS();
+        chrome.storage.sync.set({"isPresenter" : options["isPresenter"]});
+      }
+      else if ((eventEqualKey(e, shortcuts["stopPresenter"][0]) || eventEqualKey(e, shortcuts["stopPresenter"][1])) && options["isPresenter"]) {
+        options["isPresenter"]=false;
+        deleteCSS();
+        chrome.storage.sync.set({"isPresenter" : options["isPresenter"]});
+      }
+      if ((eventEqualKey(e, shortcuts["lockInPresenter"][0]) || eventEqualKey(e, shortcuts["lockInPresenter"][1])) && !options["lockContent"]) {
+        options["lockContent"]=true;
+        chrome.storage.sync.set({"lockContent" : options["lockContent"]});
+      }
+      else if ((eventEqualKey(e, shortcuts["unlockInPresenter"][0]) || eventEqualKey(e, shortcuts["unlockInPresenter"][1])) && options["lockContent"]) {
+        options["lockContent"]=false;
+        chrome.storage.sync.set({"lockContent" : options["lockContent"]});
+      }
+      if ((eventEqualKey(e, shortcuts["enableAnimation"][0]) || eventEqualKey(e, shortcuts["enableAnimation"][1])) && !options["isAnimated"]) {
+        options["isAnimated"]=true;
+        chrome.storage.sync.set({"isAnimated" : options["isAnimated"]});
+      }
+      else if ((eventEqualKey(e, shortcuts["disableAnimation"][0]) || eventEqualKey(e, shortcuts["disableAnimation"][1])) && options["isAnimated"]) {
+        options["isAnimated"]=false;
+        chrome.storage.sync.set({"isAnimated" : options["isAnimated"]});
+      }
+      if ((eventEqualKey(e, shortcuts["renderStyles"][0]) || eventEqualKey(e, shortcuts["renderStyles"][1])) && !options["isStyleRender"]) {
+        options["isStyleRender"]=true;
+        chrome.storage.sync.set({"isStyleRender" : options["isStyleRender"]});
+      }
+      else if ((eventEqualKey(e, shortcuts["leaveStyles"][0]) || eventEqualKey(e, shortcuts["leaveStyles"][1])) && options["isStyleRender"]) {
+        options["isStyleRender"]=false;
+        chrome.storage.sync.set({"isStyleRender" : options["isStyleRender"]});
+      }
+      if ((eventEqualKey(e, shortcuts["renderLaTeX"][0]) || eventEqualKey(e, shortcuts["renderLaTeX"][1])) && !options["isLatexRender"] ) {
+        options["isLatexRender"]=true;
+        chrome.storage.sync.set({"isLatexRender" : options["isLatexRender"]});
+      }
+      else if ((eventEqualKey(e, shortcuts["leaveLaTeX"][0]) || eventEqualKey(e, shortcuts["leaveLaTeX"][1])) && options["isLatexRender"]) {
+        options["isLatexRender"]=false;
+        chrome.storage.sync.set({"isLatexRender" : options["isLatexRender"]});
+      }
+      if ((eventEqualKey(e, shortcuts["renderMarkdown"][0]) || eventEqualKey(e, shortcuts["renderMarkdown"][1])) && !options["isMarkdownRender"]) {
+        options["isMarkdownRender"]=true;
+        chrome.storage.sync.set({"isMarkdownRender" : options["isMarkdownRender"]});
+      }
+      else if ((eventEqualKey(e, shortcuts["leaveMarkdown"][0]) || eventEqualKey(e, shortcuts["leaveMarkdown"][1])) && options["isMarkdownRender"]) {
+        options["isMarkdownRender"]=false;
+        chrome.storage.sync.set({"isMarkdownRender" : options["isMarkdownRender"]});
+      }
+  };
+
+  var startWorking = function() {
+    console.log(options["isStyleRender"] ? "START Rendering Style" : "STOP Rendering Style");
+    document.addEventListener("DOMNodeInserted", startTimer);
+
+
+    var path = chrome.extension.getURL('css/emoji.css');
+    $('head').append($('<link>')
+        .attr("id","emojiCSS")
+        .attr("rel","stylesheet")
+        .attr("type","text/css")
+        .attr("href", path));
+
+    var s = document.createElement('script');
+    s.src = chrome.extension.getURL("js/markdown.js");
+    (document.head||document.documentElement).appendChild(s);
+
+    s = document.createElement('script');
+    s.src = chrome.extension.getURL("js/latex.js");
+    (document.head||document.documentElement).appendChild(s);
+
+    s = document.createElement('script');
+    s.src = chrome.extension.getURL("js/inject.js");
+    (document.head||document.documentElement).appendChild(s);
+
+
+    function waitLoad(){
+      if($(".siteSlogan").length){
+        $(".siteSlogan").html(options["mlnw"])
+      }
+      else
+        setTimeout(function(){
+          waitLoad();
+        }, 500);
     };
+    waitLoad();
 
-    var startWorking = function() {
-      console.log(isStyleRender ? "START Rendering Style" : "STOP Rendering Style");
-      document.addEventListener("DOMNodeInserted", startTimer);
+    //addControllers();
+
+    var lastHeight = $(".page").css('height');
+    function checkForChanges(){
+      if ($(".page").css('height') != lastHeight){
+        $(".page").trigger('heightChange');
+        lastHeight = $(".page").css('height');
+      }
+    }
+    setInterval(checkForChanges, 100);
+    if(options["isPresenter"]) addCSS(); else deleteCSS();
+
+    var metaRenderLaTeX = $("[name=\'renderingLaTeX\']");
+    if(!metaRenderLaTeX.length){
+      metaRenderLaTeX = $("<meta>").attr("name", "renderingLaTeX").attr("content", options["isLatexRender"]);
+      $("head").append(metaRenderLaTeX);
+    }
+    metaRenderLaTeX.attr("content", options["isLatexRender"]);
+
+    var metaRenderMarkdown = $("[name=\'renderingMarkdown\']");
+    if(!metaRenderMarkdown.length){
+      metaRenderMarkdown = $("<meta>").attr("name", "renderingMarkdown").attr("content", options["isMarkdownRender"]);
+      $("head").append(metaRenderMarkdown);
+    }
+    metaRenderMarkdown.attr("content", options["isMarkdownRender"]);
+
+    var metaLock = $("[name=\'lock\']");
+    if(!metaLock.length){
+      metaLock = $("<meta>").attr("name", "lock").attr("content", options["lockContent"]);
+      $("head").append(metaLock);
+    }
+    metaLock.attr("content", options["lockContent"]);
+
+    var metaAnime = $("[name=\'isAnimated\']");
+    if(!metaAnime.length){
+      metaAnime = $("<meta>").attr("name", "isAnimated").attr("content", options["isAnimated"]);
+      $("head").append(metaAnime);
+    }
+    metaAnime.attr("content", options["isAnimated"]);
 
 
-      var path = chrome.extension.getURL('css/emoji.css');
-      $('head').append($('<link>')
-          .attr("id","emojiCSS")
-          .attr("rel","stylesheet")
-          .attr("type","text/css")
-          .attr("href", path));
-
-      var s = document.createElement('script');
-      s.src = chrome.extension.getURL("js/markdown.js");
-      (document.head||document.documentElement).appendChild(s);
-
-      s = document.createElement('script');
-      s.src = chrome.extension.getURL("js/latex.js");
-      (document.head||document.documentElement).appendChild(s);
-
-      s = document.createElement('script');
-      s.src = chrome.extension.getURL("js/inject.js");
-      (document.head||document.documentElement).appendChild(s);
-
-
-      function waitLoad(){
-        if($(".siteSlogan").length){
-          $(".siteSlogan").html(mlnw)
+    chrome.storage.onChanged.addListener(function(changes, namespace) {
+      if ("isPresenter" in changes) {
+        prev_isPresenter = options["isPresenter"];
+        options["isPresenter"] = changes.isPresenter.newValue;
+        if (prev_isPresenter != options["isPresenter"]) {
+          if(options["isPresenter"]) addCSS();
+          else deleteCSS();
         }
-        else
-          setTimeout(function(){
-            waitLoad();
-          }, 500);
+        startTimer();
       };
-      waitLoad();
-
-      //addControllers();
-
-      var lastHeight = $(".page").css('height');
-      function checkForChanges(){
-        if ($(".page").css('height') != lastHeight){
-          $(".page").trigger('heightChange');
-          lastHeight = $(".page").css('height');
+      if ("isStyleRender" in changes) {
+        options["isStyleRender"] = changes.isStyleRender.newValue;
+        console.log(options["isStyleRender"] ? "START Rendering Style" : "STOP Rendering Style");
+        startTimer();
+      };
+      if ("isLatexRender" in changes) {
+        options["isLatexRender"] = changes.isLatexRender.newValue;
+        metaRenderLaTeX.attr("content", options["isLatexRender"]);
+      };
+      if ("isMarkdownRender" in changes) {
+        options["isMarkdownRender"] = changes.isMarkdownRender.newValue;
+        metaRenderMarkdown.attr("content", options["isMarkdownRender"]);
+      };
+      if ("lockContent" in changes) {
+        options["lockContent"] = changes.lockContent.newValue;
+        metaLock.attr("content", options["lockContent"]);
+      };
+      if ("isAnimated" in changes) {
+        options["isAnimated"] = changes.isAnimated.newValue;
+        metaAnime.attr("content", options["isAnimated"]);
+      };
+      if ("theme" in changes) {
+        options["theme"] = changes.theme.newValue;
+        $("#themeCSS").attr("href", chrome.extension.getURL('css/theme/'+options["theme"]+'.css'));
+      };
+      if ("mlnw" in changes) {
+        options["mlnw"] = changes.mlnw.newValue;
+        $(".siteSlogan").html(options["mlnw"]);
+      };
+      for (var name in shortcuts){
+        if (shortcuts.hasOwnProperty(name)) {
+          if (name in changes) {
+            shortcuts[name] = changes[name].newValue;
+            if(name=="goNextSibling") $("[name='shortcutNext']").attr("content", JSON.stringify(shortcuts["goNextSibling"]));
+            if(name=="goPreviusSibling") $("[name='shortcutPrevious']").attr("content", JSON.stringify(shortcuts["goPreviusSibling"]));
+          };
         }
       }
-      setInterval(checkForChanges, 100);
-      if(isPresenter) addCSS(); else deleteCSS();
+     });
+  };
 
-      var metaRenderLaTeX = $("[name=\'renderingLaTeX\']");
-      if(!metaRenderLaTeX.length){
-        metaRenderLaTeX = $("<meta>").attr("name", "renderingLaTeX").attr("content", isLatexRender);
-        $("head").append(metaRenderLaTeX);
-      }
-      metaRenderLaTeX.attr("content", isLatexRender);
+  var callbackGetValue = function(vals) {
+    options = vals;
+    startWorking();
+  };
 
-      var metaRenderMarkdown = $("[name=\'renderingMarkdown\']");
-      if(!metaRenderMarkdown.length){
-        metaRenderMarkdown = $("<meta>").attr("name", "renderingMarkdown").attr("content", isMarkdownRender);
-        $("head").append(metaRenderMarkdown);
-      }
-      metaRenderMarkdown.attr("content", isMarkdownRender);
+  var callbackGetShortcuts = function(vals) {
+    shortcuts = vals;
+    document.addEventListener('keyup', shortcut, false);
 
-      var metaLock = $("[name=\'lock\']");
-      if(!metaLock.length){
-        metaLock = $("<meta>").attr("name", "lock").attr("content", lockContent);
-        $("head").append(metaLock);
-      }
-      metaLock.attr("content", lockContent);
+    var metaShortcutNext = $("[name='shortcutNext']");
+    if(!metaShortcutNext.length){
+      metaShortcutNext = $("<meta>").attr("name", "shortcutNext");
+      $("head").append(metaShortcutNext);
+    }
+    metaShortcutNext.attr("content", JSON.stringify(shortcuts["goNextSibling"]));
 
-      var metaAnime = $("[name=\'isAnimated\']");
-      if(!metaAnime.length){
-        metaAnime = $("<meta>").attr("name", "isAnimated").attr("content", isAnimated);
-        $("head").append(metaAnime);
-      }
-      metaAnime.attr("content", isAnimated);
+    var metaShortcutPrevious = $("[name='shortcutPrevious']");
+    if(!metaShortcutPrevious.length){
+      metaShortcutPrevious = $("<meta>").attr("name", "shortcutPrevious");
+      $("head").append(metaShortcutPrevious);
+    }
+    metaShortcutPrevious.attr("content", JSON.stringify(shortcuts["goPreviusSibling"]));
+  };
 
-
-      chrome.storage.onChanged.addListener(function(changes, namespace) {
-        if ("presenter" in changes) {
-          prev_isPresenter = isPresenter;
-          isPresenter = changes.presenter.newValue;
-          if (prev_isPresenter != isPresenter) {
-            if(isPresenter) addCSS();
-            else deleteCSS();
-          }
-          startTimer();
-        };
-        if ("isStyleRender" in changes) {
-          isStyleRender = changes.isStyleRender.newValue;
-          console.log(isStyleRender ? "START Rendering Style" : "STOP Rendering Style");
-          startTimer();
-        };
-        if ("isLatexRender" in changes) {
-          isLatexRender = changes.isLatexRender.newValue;
-          metaRenderLaTeX.attr("content", isLatexRender);
-        };
-        if ("isMarkdownRender" in changes) {
-          isMarkdownRender = changes.isMarkdownRender.newValue;
-          metaRenderMarkdown.attr("content", isMarkdownRender);
-        };
-        if ("lockContent" in changes) {
-          lockContent = changes.lockContent.newValue;
-          metaLock.attr("content", lockContent);
-        };
-        if ("isAnimated" in changes) {
-          isAnimated = changes.isAnimated.newValue;
-          metaAnime.attr("content", isAnimated);
-        };
-        if ("style" in changes) {
-          style = changes.style.newValue;
-          $("#styleCSS").attr("href", chrome.extension.getURL('css/style/'+style+'.css'));
-        };
-        if ("mlnw" in changes) {
-          mlnw = changes.mlnw.newValue;
-          $(".siteSlogan").html(mlnw);
-        };
-        for (var name in shortcuts){
-          if (shortcuts.hasOwnProperty(name)) {
-            if (name in changes) {
-              shortcuts[name] = changes[name].newValue;
-              if(name=="goNextSibling") $("[name='shortcutNext']").attr("content", JSON.stringify(shortcuts["goNextSibling"]));
-              if(name=="goPreviusSibling") $("[name='shortcutPrevious']").attr("content", JSON.stringify(shortcuts["goPreviusSibling"]));
-            };
-          }
-        }
-       });
-    };
-    var callbackGetValue = function(vals) {
-      isPresenter = vals.presenter;
-      isStyleRender = vals.isStyleRender;
-      isLatexRender = vals.isLatexRender;
-      isMarkdownRender = vals.isMarkdownRender;
-      lockContent = vals.lockContent;
-      isAnimated = vals.isAnimated;
-      style = vals.style;
-      mlnw = vals.mlnw;
-      startWorking();
-    };
-    var callbackGetShortcuts = function(vals) {
-      shortcuts = vals;
-      document.addEventListener('keyup', shortcut, false);
-
-      var metaShortcutNext = $("[name='shortcutNext']");
-      if(!metaShortcutNext.length){
-        metaShortcutNext = $("<meta>").attr("name", "shortcutNext");
-        $("head").append(metaShortcutNext);
-      }
-      metaShortcutNext.attr("content", JSON.stringify(shortcuts["goNextSibling"]));
-
-      var metaShortcutPrevious = $("[name='shortcutPrevious']");
-      if(!metaShortcutPrevious.length){
-        metaShortcutPrevious = $("<meta>").attr("name", "shortcutPrevious");
-        $("head").append(metaShortcutPrevious);
-      }
-      metaShortcutPrevious.attr("content", JSON.stringify(shortcuts["goPreviusSibling"]));
-
-    };
-  chrome.storage.sync.get({"presenter":false, "isStyleRender":true, "isLatexRender":true, "isMarkdownRender":true, "lockContent":false, "isAnimated":true, "style":"style1", "mlnw" : "Make list. Not war."}, callbackGetValue);
+  chrome.storage.sync.get(options, callbackGetValue);
   chrome.storage.sync.get(shortcuts, callbackGetShortcuts);
 
-	chrome.runtime.sendMessage({
-		type: 'showIcon'
-	}, function() {});
+	chrome.runtime.sendMessage({type: 'showIcon'}, function() {});
 }) (jQuery);
 
 class Color{
