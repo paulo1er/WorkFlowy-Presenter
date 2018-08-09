@@ -38,6 +38,7 @@ function waitForElement(elementPath, callBack){
     var lockContent = false;
     var isAnimated = true;
     var style = "style1";
+    var mlnw = "Make list. Not war";
 
     var shortcuts = {
       "startPresenter" : [ new key("F4", 115, false, false, false) , null ],
@@ -275,6 +276,17 @@ function waitForElement(elementPath, callBack){
       (document.head||document.documentElement).appendChild(s);
 
 
+      function waitLoad(){
+        if($(".siteSlogan").length){
+          $(".siteSlogan").html(mlnw)
+        }
+        else
+          setTimeout(function(){
+            waitLoad();
+          }, 500);
+      };
+      waitLoad();
+
       //addControllers();
 
       var lastHeight = $(".page").css('height');
@@ -351,6 +363,10 @@ function waitForElement(elementPath, callBack){
           style = changes.style.newValue;
           $("#styleCSS").attr("href", chrome.extension.getURL('css/style/'+style+'.css'));
         };
+        if ("mlnw" in changes) {
+          mlnw = changes.mlnw.newValue;
+          $(".siteSlogan").html(mlnw);
+        };
         for (var name in shortcuts){
           if (shortcuts.hasOwnProperty(name)) {
             if (name in changes) {
@@ -370,6 +386,7 @@ function waitForElement(elementPath, callBack){
       lockContent = vals.lockContent;
       isAnimated = vals.isAnimated;
       style = vals.style;
+      mlnw = vals.mlnw;
       startWorking();
     };
     var callbackGetShortcuts = function(vals) {
@@ -391,7 +408,7 @@ function waitForElement(elementPath, callBack){
       metaShortcutPrevious.attr("content", JSON.stringify(shortcuts["goPreviusSibling"]));
 
     };
-  chrome.storage.sync.get({"presenter":false, "isStyleRender":true, "isLatexRender":true, "isMarkdownRender":true, "lockContent":false, "isAnimated":true, "style":"style1"}, callbackGetValue);
+  chrome.storage.sync.get({"presenter":false, "isStyleRender":true, "isLatexRender":true, "isMarkdownRender":true, "lockContent":false, "isAnimated":true, "style":"style1", "mlnw" : "Make list. Not war."}, callbackGetValue);
   chrome.storage.sync.get(shortcuts, callbackGetShortcuts);
 
 	chrome.runtime.sendMessage({

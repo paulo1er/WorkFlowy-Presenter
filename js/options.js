@@ -4,8 +4,10 @@ var option = {
   "isMarkdownRender" : true,
   "lockContent" : false,
   "isAnimated" : true,
-  "style" : "style1"
+  "style" : "style1",
 }
+
+var mlnw = "Make lists. Not war.";
 
 var key = function(keyName, keyCode, ctrlKey, shiftKey, altKey){
   this.keyName= keyName;
@@ -97,6 +99,7 @@ function eventListener(e){
 function initValues(){
   chrome.storage.sync.get(option, callbackGetValue);
   chrome.storage.sync.get(shortcuts, callbackGetShortcuts);
+  chrome.storage.sync.get({"mlnw":mlnw}, callbackGetMlnw);
 
   document.addEventListener('keydown', eventListener, false);
 
@@ -111,6 +114,16 @@ function initValues(){
       $("#"+name).children(".shortcut2").click(clickShortcut2);
     }
   }
+
+  $('#mlnw').on('blur', function() {
+      if ($(this).data('before') !== $(this).html()) {
+          $(this).data('before', $(this).html());
+          mlnw = $(this).html();
+          console.log(mlnw);
+          chrome.storage.sync.set({"mlnw":mlnw}, function(){});
+      }
+  });
+
 
   chrome.storage.onChanged.addListener(function(changes, namespace) {
     for (var name in option){
@@ -132,6 +145,10 @@ function initValues(){
           if(shortcuts[name][1]) row.children(".shortcut2").text(keyToString(shortcuts[name][1]));
         };
       }
+    }
+    if("mlnw" in changes){
+      mlnw = changes["mlnw"].newValue;
+      $('#mlnw').html(mlnw);
     }
   });
 
@@ -163,6 +180,14 @@ function callbackGetShortcuts(vals){
     }
   }
   warningOptionSelected();
+}
+
+function callbackGetMlnw(vals){
+  if(vals["mlnw"] && vals["mlnw"] != ""){
+    mlnw = vals["mlnw"];
+    console.log(mlnw);
+    $('#mlnw').html(mlnw);
+  }
 }
 
 function warningOptionSelected(){
