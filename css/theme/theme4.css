@@ -10,6 +10,7 @@
 
 .page {
   background-color: #E5EAEA;
+  border-bottom: 0;
 }
 
 .page::after{

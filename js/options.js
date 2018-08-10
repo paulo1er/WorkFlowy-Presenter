@@ -1,11 +1,13 @@
-var option = {
+var options = {
   "isStyleRender" : true,
   "isLatexRender" : true,
   "isMarkdownRender" : true,
   "lockContent" : false,
   "isAnimated" : true,
-  "style" : "style1"
+  "theme" : "theme1",
 }
+
+var mlnw = "Make lists. Not war.";
 
 var key = function(keyName, keyCode, ctrlKey, shiftKey, altKey){
   this.keyName= keyName;
@@ -49,9 +51,9 @@ var shortcuts = {
 
 function onClick(){
   var name = $(this).attr('id');
-  if($(this).prop("type") == "checkbox") option[name] = $(this).prop('checked');
-  else option[name] = $(this).val();
-  chrome.storage.sync.set(option, function(){});
+  if($(this).prop("type") == "checkbox") options[name] = $(this).prop('checked');
+  else options[name] = $(this).val();
+  chrome.storage.sync.set(options, function(){});
 }
 
 function clickShortcut2(){
@@ -95,13 +97,14 @@ function eventListener(e){
 
 
 function initValues(){
-  chrome.storage.sync.get(option, callbackGetValue);
+  chrome.storage.sync.get(options, callbackGetValue);
   chrome.storage.sync.get(shortcuts, callbackGetShortcuts);
+  chrome.storage.sync.get({"mlnw":mlnw}, callbackGetMlnw);
 
   document.addEventListener('keydown', eventListener, false);
 
-  for (var name in option){
-    if (option.hasOwnProperty(name)) {
+  for (var name in options){
+    if (options.hasOwnProperty(name)) {
       $("#"+name).change(onClick);
     }
   }
@@ -112,13 +115,23 @@ function initValues(){
     }
   }
 
+  $('#mlnw').on('blur', function() {
+      if ($(this).data('before') !== $(this).html()) {
+          $(this).data('before', $(this).html());
+          mlnw = $(this).html();
+          console.log(mlnw);
+          chrome.storage.sync.set({"mlnw":mlnw}, function(){});
+      }
+  });
+
+
   chrome.storage.onChanged.addListener(function(changes, namespace) {
-    for (var name in option){
-      if (option.hasOwnProperty(name)) {
+    for (var name in options){
+      if (options.hasOwnProperty(name)) {
         if (name in changes) {
-          option[name] = changes[name].newValue;
-          if($("#"+name).prop("type") == "checkbox") $("#"+name).prop('checked', option[name]);
-          else $("#"+name).val(option[name]);
+          options[name] = changes[name].newValue;
+          if($("#"+name).prop("type") == "checkbox") $("#"+name).prop('checked', options[name]);
+          else $("#"+name).val(options[name]);
           warningOptionSelected();
         };
       }
@@ -133,21 +146,25 @@ function initValues(){
         };
       }
     }
+    if("mlnw" in changes){
+      mlnw = changes["mlnw"].newValue;
+      $('#mlnw').html(mlnw);
+    }
   });
 
   $('head').append($('<link>')
-    .attr("id","styleCSS")
+    .attr("id","themeCSS")
     .attr("rel","stylesheet")
     .attr("type","text/css")
     .attr("href", ""));
 }
 
 function callbackGetValue(vals){
-  option=vals;
-  for (var name in option){
-    if (option.hasOwnProperty(name)) {
-      if($("#"+name).prop("type") == "checkbox") $("#"+name).prop('checked', option[name]);
-      else $("#"+name).val(option[name]);
+  options=vals;
+  for (var name in options){
+    if (options.hasOwnProperty(name)) {
+      if($("#"+name).prop("type") == "checkbox") $("#"+name).prop('checked', options[name]);
+      else $("#"+name).val(options[name]);
     }
   }
   warningOptionSelected();
@@ -165,11 +182,19 @@ function callbackGetShortcuts(vals){
   warningOptionSelected();
 }
 
+function callbackGetMlnw(vals){
+  if(vals["mlnw"] && vals["mlnw"] != ""){
+    mlnw = vals["mlnw"];
+    console.log(mlnw);
+    $('#mlnw').html(mlnw);
+  }
+}
+
 function warningOptionSelected(){
-  if(!(option["isLatexRender"]  || option["isMarkdownRender"])  || option["lockContent"]) $("#needLock").hide();
+  if(!(options["isLatexRender"]  || options["isMarkdownRender"])  || options["lockContent"]) $("#needLock").hide();
   else $("#needLock").show();
 
-  $("#styleCSS").attr("href", chrome.extension.getURL('css/style/'+option["style"]+'.css'));
+  $("#themeCSS").attr("href", chrome.extension.getURL('css/theme/'+options["theme"]+'.css'));
 }
 
 $(document).ready(function(){
