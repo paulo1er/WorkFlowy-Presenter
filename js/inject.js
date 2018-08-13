@@ -40,15 +40,15 @@ function initURLchange(){
   waitLoad(function(){
     try {
       handler = $(window).data("events").keydown[0].handler;
-
       $("*").keydown(function(e){
         if (eventEqualKey(e, shortcutNext[0]) || eventEqualKey(e, shortcutNext[1])) {
           handler({
             which:48,
             charCode:0,
-            ctrlKey:true,
             keyCode:48,
+            ctrlKey:!IS_WINDOWS,
             shiftKey:true,
+            altKey:IS_WINDOWS,
             type:"keydown",
           });
           event.stopPropagation();
@@ -57,14 +57,15 @@ function initURLchange(){
           handler({
             which:57,
             charCode:0,
-            ctrlKey:true,
             keyCode:48,
+            ctrlKey:!IS_WINDOWS,
             shiftKey:true,
+            altKey:IS_WINDOWS,
             type:"keydown",
           });
           event.stopPropagation();
         }
-
+        
         if((e.keyCode == '33') || (e.keyCode == '34')){
           e.preventDefault();
         }
