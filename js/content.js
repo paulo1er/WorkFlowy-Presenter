@@ -33,6 +33,7 @@ function waitForElement(elementPath, callBack){
     "lockContent" : false,
     "isAnimated" : true,
     "theme" : "theme1",
+    "styleTag" : "wfp-",
     "mlnw" : "Make list. Not war",
   }
 
@@ -74,9 +75,12 @@ function waitForElement(elementPath, callBack){
       else{
         node.children(".contentTag").children(".contentTagText").each(function() {
           var tagText = $(this).text();
-          for (var p in properties) {
-            if (properties.hasOwnProperty(p)){
-              styles = $.extend(styles, properties[p].styles(tagText));
+          if(tagText.startsWith(options["styleTag"])){
+            tagText = tagText.slice(options["styleTag"].length, tagText.length);
+            for (var p in properties) {
+              if (properties.hasOwnProperty(p)){
+                styles = $.extend(styles, properties[p].styles(tagText));
+              }
             }
           }
         });
@@ -359,6 +363,9 @@ function waitForElement(elementPath, callBack){
         options["theme"] = changes.theme.newValue;
         $("#themeCSS").attr("href", chrome.extension.getURL('css/theme/'+options["theme"]+'.css'));
       };
+      if ("styleTag" in changes) {
+        options["styleTag"] = changes.styleTag.newValue;
+      };
       if ("mlnw" in changes) {
         options["mlnw"] = changes.mlnw.newValue;
         $(".siteSlogan").html(options["mlnw"]);
@@ -448,21 +455,21 @@ class Propertie{
   }
 }
 var properties = {
-  background: new Propertie("background-color", /^wfe-background:(?:([a-z]*)|rgb:([0-9a-f]*))$/i, function(attr){
+  background: new Propertie("background-color", /^background:(?:([a-z]*)|rgb:([0-9a-f]*))$/i, function(attr){
     if(attr != null && attr[1] != null && allColor.hasOwnProperty(attr[1].toUpperCase()))
       return (new Color(allColor[attr[1].toUpperCase()])).toString();
     else if(attr != null && attr[2] != null && (attr[2].length==3 ||attr[2].length==6))
       return hexaToColor(attr[2]).toString();
     return "";
   }),
-  color: new Propertie("color", /^wfe-font-color:(?:([a-z]*)|rgb:([0-9a-f]*))$/i, function(attr){
+  color: new Propertie("color", /^font-color:(?:([a-z]*)|rgb:([0-9a-f]*))$/i, function(attr){
     if(attr != null && attr[1] != null && allColor.hasOwnProperty(attr[1].toUpperCase()))
       return (new Color(allColor[attr[1].toUpperCase()])).toString();
     else if(attr != null && attr[2] != null && (attr[2].length==3 ||attr[2].length==6))
       return hexaToColor(attr[2]).toString();
     return "";
   }),
-  font: new Propertie("font-family", /^wfe-font-face:([a-z_]*)$/i, function(attr){
+  font: new Propertie("font-family", /^font-face:([a-z_]*)$/i, function(attr){
     if(attr != null && attr[1] != null) {
   		var value = attr[1].toUpperCase().replaceAll("_", " ");
       if(allFont.hasOwnProperty(value))
@@ -470,7 +477,7 @@ var properties = {
     }
     return "";
   }),
-  bold: new Propertie("font-weight", /^wfe-font-weight:([a-z]*)$/i, function(attr){
+  bold: new Propertie("font-weight", /^font-weight:([a-z]*)$/i, function(attr){
     if(attr != null && attr[1] != null) {
       if(attr[1].toUpperCase() == "BOLD")
         return "bold";
@@ -479,7 +486,7 @@ var properties = {
     }
     return "";
   }),
-  italic: new Propertie("font-style", /^wfe-font-style:([a-z]*)$/i, function(attr){
+  italic: new Propertie("font-style", /^font-style:([a-z]*)$/i, function(attr){
     if(attr != null && attr[1] != null) {
       if(attr[1].toUpperCase() == "ITALIC")
         return "italic";
@@ -488,20 +495,20 @@ var properties = {
     }
     return "";
   }),
-  underline: new Propertie("text-decoration", /^wfe-text-decoration:([a-z]*)$/i, function(attr){
+  underline: new Propertie("text-decoration", /^text-decoration:([a-z]*)$/i, function(attr){
     if(attr != null && attr[1] != null) {
       if(attr[1].toUpperCase() == "UNDERLINE")
         return "underline";
     }
     return "";
   }),
-  size: new Propertie("font-size", /^wfe-font-size:([0-9]*)$/i, function(attr){
+  size: new Propertie("font-size", /^font-size:([0-9]*)$/i, function(attr){
     if(attr != null && attr[1] != null && attr[1]>0) {
       return attr[1]+"px";
     }
     return "";
   }),
-  textAlign: new Propertie("text-align", /^wfe-text-align:([a-z]*)$/i, function(attr){
+  textAlign: new Propertie("text-align", /^text-align:([a-z]*)$/i, function(attr){
     if(attr != null && attr[1] != null) {
       if(attr[1].toUpperCase() == "CENTER")
         return "center";

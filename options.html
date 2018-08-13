@@ -38,6 +38,10 @@
                 <label class="form-control" for="isStyleRender">Render styles</label>
               </div>
               <div class="input-group">
+                <label class="input-group-addon" for="styleTag">Prefix style tag</label>
+                <input type="text" id="styleTag" class="form-control">
+              </div>
+              <div class="input-group">
                 <span class="input-group-addon">
                   <input type="checkbox" id="isLatexRender" class="form-check-input">
                 </span>
@@ -74,7 +78,7 @@
                           <div class="project open initialLoad">
                             <div class="name">
                               <div class="bullet"></div>
-                              <div class="content">Lorem Ipsum</div>
+                              <div class="content content-with-tag">Lorem Ipsum #<span class="prefix-style-tag">wfp-</span>color:gray</div>
                             </div>
                           </div>
                           <div class="project open initialLoad">
