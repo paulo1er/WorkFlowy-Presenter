@@ -2,6 +2,14 @@ String.prototype.replaceAll = function(find, replace) {
     return this.split(find).join(replace);
 };
 
+String.prototype.titleCase = function () {
+   var splitStr = this.toLowerCase().split(' ');
+   for (var i = 0; i < splitStr.length; i++) {
+       splitStr[i] = splitStr[i].charAt(0).toUpperCase() + splitStr[i].substring(1);
+   }
+   return splitStr.join(' ');
+}
+
 function waitForElement(elementPath, callBack){
   window.setTimeout(function(){
     if($(elementPath).length){
@@ -471,9 +479,17 @@ var properties = {
   }),
   font: new Propertie("font-family", /^font-face:([a-z_]*)$/i, function(attr){
     if(attr != null && attr[1] != null) {
-  		var value = attr[1].toUpperCase().replaceAll("_", " ");
-      if(allFont.hasOwnProperty(value))
-        return allFont[value];
+  		var value = attr[1].replaceAll("_", " ");
+      value = value.titleCase();
+      if(usedFont.includes(value))
+        return value;
+      else{
+        var link = "https://fonts.googleapis.com/css?family=" + value.replaceAll(' ', '+');
+        var $link = $("<link>").attr("href", link).attr('rel', 'stylesheet').attr('type', 'text/css');
+        $("head").append($link);
+        usedFont.push(value);
+        return value;
+      }
     }
     return "";
   }),
@@ -677,19 +693,4 @@ var allColor={
 		BLACK : [0,0,0]
 };
 
-var allFont ={
-	"ARIAL" : "Arial",
-	"TIMES NEW ROMAN" :  "Times New Roman",
-	"COURIER" : "Courier New",
-	"SYMBOL" : "Symbol",
-	"GEORGIA" : "Georgia",
-	"PALATINO LINOTYPE" : "Palatino Linotype",
-	"ARIAL BLACK" : "Arial Black",
-	"COMIC SANS MS" : "Comic Sans MS",
-	"IMPACT" : "Impact",
-	"LUCIDA SANS UNICODE" : "Lucida Sans Unicode",
-	"TAHOMA" : "Tahoma",
-	"TREBUCHET MS" : "Trebuchet MS",
-	"VERDANA" : "Verdana",
-	"LUCIDA CONSOLE" : "Lucida Console"
-}
+var usedFont =[];
