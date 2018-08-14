@@ -1,6 +1,7 @@
 {
  "manifest_version": 2,
  "name": "WorkFlowy Presenter",
+ "short_name": "WFP",
   "version": "3.2",
   "version_name": "2.2",
   "description": "Presenter for workflowy.com.",
