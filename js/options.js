@@ -4,6 +4,7 @@ var options = {
   "isMarkdownRender" : true,
   "lockContent" : false,
   "isAnimated" : true,
+  "styleTag" : "wfp-",
   "theme" : "theme1",
 }
 
@@ -125,6 +126,16 @@ function initValues(){
   });
 
 
+  $('#styleTag').bind('keyup blur',function(){
+    var regex = /^(([a-z0-9])+[-:_]?)*$/g;
+    var str= $(this).val();
+    while(!regex.test(str)) {
+      str = str.replace(/.$/g,'');
+    }
+    $(this).val(str);
+  });
+
+
   chrome.storage.onChanged.addListener(function(changes, namespace) {
     for (var name in options){
       if (options.hasOwnProperty(name)) {
@@ -195,6 +206,12 @@ function warningOptionSelected(){
   else $("#needLock").show();
 
   $("#themeCSS").attr("href", chrome.extension.getURL('css/theme/'+options["theme"]+'.css'));
+
+
+  $(".prefix-style-tag").text(options["styleTag"]);
+
+  if(options["isStyleRender"]) $(".content-with-tag").css("color", "Gray");
+  else $(".content-with-tag").css("color", "");
 }
 
 $(document).ready(function(){
