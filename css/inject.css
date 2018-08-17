@@ -1,40 +1,41 @@
-.content-img img {
+.content-img.content-img img {
   max-width: 95%;
 }
 
-.content .contentTag, .nameAnimated .contentTag {
+.content.content .contentTag.contentTag, .nameAnimated.nameAnimated .contentTag.contentTag {
   display: none;
 }
 
-.content .contentTagText, .nameAnimated .contentTagText {
+.content.content .contentTagText.contentTagText, .nameAnimated.nameAnimated .contentTagText.contentTagText {
   text-decoration: none;
 }
 
-#header div:not(.show){
+#header div:not(.show.show){
   display: none;
 }
 
 #bottomLinks{
   display: none;
 }
-.proPitch{
+.proPitch.proPitch{
   display: none;
 }
-.pageControls{
+.pageControls.pageControls{
   display: none;
 }
 
-#pageContainer{
+#pageContainer#pageContainer{
   margin-top:5px;
+  margin-bottom: 0px;
 }
-.showCompleted{
+.showCompleted.showCompleted{
   padding-top: 0;
 }
 
-.pageStar{
+.pageStar.pageStar{
   display: none;
 }
-.moreControlsButton{
+.moreControlsButton.moreControlsButton{
   margin-right: 0;
   z-index: 3;
 }
@@ -43,15 +44,15 @@
   display: none;
 }
 
-.parent > .name {
+.parent.parent > .name.name {
   display: none;
 }
 
-.children {
+.children.children {
   border-left: 0px;
 }
 
-.footer{
+.footer.footer{
   position: absolute;
   bottom: 0px;
   left:60px;
@@ -62,26 +63,29 @@
   z-index: 100;
   height:1.2em;
 }
-.footer h3{
+.footer.footer h3{
   font-size: 8px;
 }
-.page{
+.page.page{
   position: absolute;
   padding: 0;
+  border: 2px solid #666666;
+}
+.selected.selected.project.project > .name.name{
+  border-radius: 5px 5px 0 0;
 }
 
-
-body{
-  min-height: 100vh;
-}
-
-.mainTreeRoot{
+.mainTreeRoot.mainTreeRoot{
   min-height: calc(50vh - 70px);
 }
 
-.page > .project {
+.page.page > .project.project {
   margin: 10px 10px;
   padding: 0px 50px;
+}
+
+.bottomPadding.bottomPadding{
+  display:none;
 }
 
 #goParent {
@@ -108,11 +112,11 @@ body{
   body * {
     visibility: hidden;
   }
-  .page, .page * {
+  .page.page, .page.page * {
     visibility: visible;
   }
 
-  .page{
+  .page.page{
     zoom:1;
     padding:10px !important;
   }

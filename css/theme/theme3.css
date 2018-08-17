@@ -1,15 +1,15 @@
-.selected.project > .name {
+.selected.selected.project.project > .name.name {
   padding: 6px 0px;
   text-align: left;
   margin: 0px 0px 10px 0px;
 }
 
-.page {
+.page.page {
   background: linear-gradient(-45deg, #BBB, #FFF);
   background-color: #DDD;
 }
 
-.highlighted::before{
+.highlighted.highlighted::before{
   background-color:#D0D0D9;
   opacity:0.5;
 }

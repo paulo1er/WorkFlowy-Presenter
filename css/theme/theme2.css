@@ -1,4 +1,4 @@
-.selected.project > .name {
+.selected.selected.project.project > .name.name {
   padding: 6px 60px;
   text-align: center;
   margin: 0px 0px 10px 0px;
@@ -6,15 +6,18 @@
   color: #3A4900;
 }
 
-.page > .project {
-  border: 2px solid #83992A;
+.page.page > .project.project {
   padding: 0px 48px;
 }
 
-.highlighted::before{
+.page.page{
+  border-color: #83992A;
+}
+
+.highlighted.highlighted::before{
   background-color:#D5E88B;
 }
 
-.footer{
+.footer.footer{
   bottom: -8px;
 }
