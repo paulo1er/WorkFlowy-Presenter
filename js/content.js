@@ -143,9 +143,9 @@ function waitForElement(elementPath, callBack){
       var w = $(".page").width();
       var h = $(".page").height();
       var ratio = 2;
-      if(w*ratio > $(document).width()*0.9) ratio = ($(document).width()*0.9) / w;
+      if(w*ratio > $(document).width()*0.85) ratio = ($(document).width()*0.85) / w;
       if(ratio < 1) ratio = 1;
-      var minHeight = ($(document).height()/ratio)-40 ;
+      var minHeight = ($(document).height()/ratio)-55;
       console.log(minHeight);
       $(".page").css({
         "transform-origin" : "center 0",

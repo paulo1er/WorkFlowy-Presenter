@@ -1,5 +1,5 @@
 
-.selected.project > .name {
+.selected.selected.project.project > .name.name {
   padding: 21px 60px 10px 60px;
   margin: -15px -60px 6px -60px;
   background: repeating-linear-gradient(
@@ -10,7 +10,7 @@
       #00C0B6 20px
     );
 }
-.selected.project > .name::after {
+.selected.selected.project.project > .name.name::after {
     position:absolute;
     left:100%;
     top:100%;
@@ -24,29 +24,29 @@
 }
 
 @media print {
-  .selected.project > .name::after {
+  .selected.selected.project.project > .name.name::after {
     border-color: transparent;
   }
 }
-.name{
+.name.name{
   color: white;
 }
 
 @media print {
-  .name{
+  .name.name{
     color: black;
   }
 }
 
-.page {
+.page.page {
     background: #212121;
-    border-color: #212121;
+    border-width: 0;
 }
 body{
     background-color: #151515;
 }
 
-.highlighted::before{
+.highlighted.highlighted::before{
   background-color:#3E7A6F;
   opacity:0.5;
 }
