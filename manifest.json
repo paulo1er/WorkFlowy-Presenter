@@ -2,15 +2,15 @@
  "manifest_version": 2,
  "name": "WorkFlowy Presenter",
  "short_name": "WFP",
-  "version": "3.3",
-  "version_name": "2.3",
+  "version": "3.3.1",
+  "version_name": "2.3.1",
   "description": "Presenter for workflowy.com.",
   "background": {
     "scripts":["js/background.js"]
   },
   "content_scripts": [
     {
-      "matches": ["https://workflowy.com/*"],
+      "matches": ["https://workflowy.com/*","https://beta.workflowy.com/*"],
       "js": ["js/jquery.min.js", "js/content.js", "js/modal.js"]
     }
   ],
