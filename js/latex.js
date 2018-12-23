@@ -45,9 +45,11 @@
       if (timerRendering) {
         clearInterval(timerRendering);
       };
-      var focus = READ_ONLY_MAIN_TREE ? null : getCurrentlyFocusedContent();
+      var focus = READ_ONLY_MAIN_TREE ? null :  WF.focusedItem();
+      if(focus) focus = $('[projectid='+focus.getId()+']>div>.content');
       timerRendering = setInterval(function(){
-        focus = READ_ONLY_MAIN_TREE ? null : getCurrentlyFocusedContent();
+        focus = READ_ONLY_MAIN_TREE ? null : WF.focusedItem();
+        if(focus) focus = $('[projectid='+focus.getId()+']>div>.content');
 
         $(".selected .content").each(function(){
           if(focus && (focus[0].isSameNode($(this)[0])) ) {

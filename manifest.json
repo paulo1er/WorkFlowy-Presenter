@@ -2,8 +2,8 @@
  "manifest_version": 2,
  "name": "WorkFlowy Presenter",
  "short_name": "WFP",
-  "version": "3.3.1",
-  "version_name": "2.3.1",
+  "version": "3.3.2",
+  "version_name": "2.3.2",
   "description": "Presenter for workflowy.com.",
   "background": {
     "scripts":["js/background.js"]
