@@ -107,12 +107,12 @@
     }, 1000);
   }
 
-  $(window).load(function() {
+  $(window).on('load',function() {
     initRenderingLaTeX();
   });
 
-  var oldProjectIsMergeable = jQuery.fn.projectIsMergable;
-  jQuery.fn.projectIsMergable = function(a) {
+  var oldProjectIsMergeable = $.fn.projectIsMergable;
+  $.fn.projectIsMergable = function(a) {
     var is_mergeable = oldProjectIsMergeable.apply(this, arguments);
     if (is_mergeable) {
       var focus = this.getName().children(".content");
@@ -122,8 +122,8 @@
     return is_mergeable;
   }
 
-  var oldFunction = jQuery.fn.saveContent;
-  jQuery.fn.saveContent = function() {
+  var oldFunction = $.fn.saveContent;
+  $.fn.saveContent = function() {
     mathjaxHtmlToText($(this));
     return oldFunction.apply(this, arguments);
   }

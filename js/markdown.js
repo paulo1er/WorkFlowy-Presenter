@@ -161,13 +161,13 @@
     }, 1000);
   }
 
-  $(window).load(function() {
+  $(window).on('load',function() {
     initRenderingMarkdown();
     console.log(window);
   });
 
-  var oldProjectIsMergeable2 = jQuery.fn.projectIsMergable;
-  jQuery.fn.projectIsMergable = function(a) {
+  var oldProjectIsMergeable2 = $.fn.projectIsMergable;
+  $.fn.projectIsMergable = function(a) {
     var is_mergeable = oldProjectIsMergeable2.apply(this, arguments);
     if (is_mergeable) {
       var focus = this.getName().children(".content");
@@ -179,8 +179,8 @@
     return is_mergeable;
   }
 
-  var oldFunction = jQuery.fn.saveContent;
-  jQuery.fn.saveContent = function() {
+  var oldFunction = $.fn.saveContent;
+  $.fn.saveContent = function() {
     imageHtmlToText($(this));
     videoHtmlToText($(this));
     linkHtmlToText($(this));

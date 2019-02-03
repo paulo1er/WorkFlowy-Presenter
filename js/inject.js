@@ -75,7 +75,7 @@ function initURLchange(){
   });
 }
 
-$(window).load(function() {
+$(window).on('load',function() {
   initURLchange()
   initLockUnlock();
   initNoAnimation();
